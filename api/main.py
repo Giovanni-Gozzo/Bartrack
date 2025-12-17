@@ -1,9 +1,13 @@
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends,HTTPException
 from sqlalchemy.orm import Session
 from api.database import get_db
 from api import schemas
 from api.services import calculations, query
+from api import crud
+from api import models
+from api.database import Base
+
 
 app = FastAPI()
 
@@ -51,6 +55,13 @@ async def generic_update(request: schemas.GenericUpdateRequest, db: Session = De
     """
     return await query.execute_generic_update(request, db)
 
+@app.post("/users/", response_model=schemas.UserCreate)
+def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(models.Utilisateur).filter(models.Utilisateur.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email déjà enregistré")
+
+    return crud.create_user(db=db, user=user)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.0", port=8001)
