@@ -10,5 +10,3 @@ class UserCreate(BaseModel):
     date_naissance: date
     poids_corps: float
     sexe: str
-    role: str = "athlete"
-    id_coach: Optional[int] = None
