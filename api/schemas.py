@@ -1,0 +1,31 @@
+from pydantic import BaseModel, Field
+from typing import List, Dict, Any
+
+class InitRequest(BaseModel):
+    idutilisateur: str = Field(..., description="Identifiant unique de l'utilisateur")
+    idexercice: str = Field(..., description="Id de l'exercice")
+    rpe_low: float = Field(..., description="RPE le plus petit")
+    rpe_high: float = Field(..., description="RPE le plus grand")
+    speed_low: float = Field(..., gt=0, description="Vitesse correspondant au RPE le plus petit")
+    speed_high: float = Field(..., gt=0, description="Vitesse correspondant au RPE le plus grand")
+
+class ComputeRpeRequest(BaseModel):
+    idutilisateur: str = Field(..., description="Identifiant unique de l'utilisateur")
+    idexercice: str = Field(..., description="Id de l'exercice")
+    speed: float = Field(..., description="Vitesse pour le calcul du RPE")
+
+class PoidsRPE(BaseModel):
+    idutilisateur: str = Field(..., description="Identifiant unique de l'utilisateur")
+    idexercice: str = Field(..., description="Id de l'exercice")
+    rpe: float = Field(..., description="RPE perçu")
+    nbrep: int = Field(..., description="Nombre de répétitions")
+
+class GenericQueryRequest(BaseModel):
+    table_name: str
+    columns: List[str] = ["*"]
+    conditions: Dict[str, Any] = {}
+
+class GenericUpdateRequest(BaseModel):
+    table_name: str
+    updates: Dict[str, Any]
+    conditions: Dict[str, Any] = {}
