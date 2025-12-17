@@ -1,12 +1,9 @@
 import uvicorn
-from fastapi import FastAPI, Depends,HTTPException
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from api.database import get_db
-from api import schemas
-from api.services import calculations, query
-from api import crud
-from api import models
-from api.database import Base
+from api import schemas, auth
+from api.services import calculations, query, users
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -36,44 +33,66 @@ async def hello():
         "Intercept = rpe_high - slope * speed_high."
     ),
 )
-async def initialize(payload: schemas.InitRequest):
-    return await calculations.initialize_profile(payload)
+async def initialize(payload: schemas.InitRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await calculations.initialize_profile(payload, db, current_user)
 
 @app.post(
     "/compute_rpe",
     summary="Compute RPE from speed, slope and intercept",
     description="Calcule le RPE selon la formule rpe = slope * speed + intercept",
 )
-async def compute_rpe(payload: schemas.ComputeRpeRequest, db: Session = Depends(get_db)):
-    return await calculations.calculate_rpe(payload, db)
+async def compute_rpe(payload: schemas.ComputeRpeRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await calculations.calculate_rpe(payload, db, current_user)
 
 @app.post(
     "/compute_weight",
     summary="Compute weight from 1RM and RPE")
-async def compute_weight(payload: schemas.PoidsRPE, db: Session = Depends(get_db)):
-    return await calculations.calculate_weight(payload, db)
+async def compute_weight(payload: schemas.PoidsRPE, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await calculations.calculate_weight(payload, db, current_user)
 
 @app.post("/generic_query", summary="Generic database query")
-async def generic_query(request: schemas.GenericQueryRequest, db: Session = Depends(get_db)):
+async def generic_query(request: schemas.GenericQueryRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     """
     Executes a SELECT query on the specified table.
     """
     return await query.execute_generic_query(request, db)
 
 @app.post("/generic_update", summary="Generic database update")
-async def generic_update(request: schemas.GenericUpdateRequest, db: Session = Depends(get_db)):
+async def generic_update(request: schemas.GenericUpdateRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     """
     Executes an UPDATE query on the specified table.
     """
     return await query.execute_generic_update(request, db)
 
-@app.post("/users/", response_model=schemas.UserCreate)
-def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(models.Utilisateur).filter(models.Utilisateur.email == user.email).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email déjà enregistré")
+@app.post("/generic_create", summary="Generic database create")
+async def generic_create(request: schemas.GenericCreateRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    """
+    Executes an INSERT query on the specified table.
+    """
+    return await query.execute_generic_create(request, db)
 
-    return crud.create_user(db=db, user=user)
+@app.post("/users/", response_model=schemas.UserCreate)
+async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    return await users.register_new_user(user, db)
+
+@app.post("/rm1_users/", response_model=schemas.Rm1Users)
+async def rm1_users(users_req: schemas.Rm1Users, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await users.rm1_users(users_req, db, current_user)
+
+from fastapi.security import OAuth2PasswordRequestForm
+
+@app.post("/login", summary="Login user")
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    Compatible avec le bouton 'Authorize' du Swagger UI.
+    Utilise 'username' pour l'email.
+    """
+    # Map form "username" to our "email" field
+    login_req = schemas.LoginRequest(
+        email=form_data.username,
+        mot_de_passe=form_data.password
+    )
+    return await users.authenticate_user(login_req, db)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.0", port=8001)
+    uvicorn.run(app, host="127.0.0.1", port=8001)

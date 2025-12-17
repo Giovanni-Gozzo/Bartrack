@@ -1,9 +1,13 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from api import schemas
-from api.services.query import execute_generic_query
+from api.services import query, users
 
-async def initialize_profile(payload: schemas.InitRequest):
+async def initialize_profile(payload: schemas.InitRequest, db: Session, user_email: str):
+    # Fetch user ID
+    user = await users.get_user_by_email(user_email, db)
+    user_id = int(user["id_utilisateur"])
+
     rpe_low = payload.rpe_low
     rpe_high = payload.rpe_high
     v_low = payload.speed_low
@@ -28,11 +32,11 @@ async def initialize_profile(payload: schemas.InitRequest):
                 "intercept": intercept
             },
             conditions={
-                "id_utilisateur": payload.idutilisateur,
-                "id_exercice": payload.idexercice
+                "id_utilisateur": user_id,
+                "id_exercice": int(payload.idexercice)
             }
         )
-        await execute_generic_update(req, db)
+        await query.execute_generic_update(req, db)
     except Exception as e:
         print(f"Erreur update DB: {e}")
 
@@ -44,12 +48,15 @@ async def initialize_profile(payload: schemas.InitRequest):
             "rpe_high": rpe_high,
             "speed_low": v_low,
             "speed_high": v_high,
-            "idutilisateur": payload.idutilisateur,
+            "idutilisateur": user_id,
             "idexercice": payload.idexercice
         },
     }
 
-async def calculate_rpe(payload: schemas.ComputeRpeRequest, db: Session):
+async def calculate_rpe(payload: schemas.ComputeRpeRequest, db: Session, user_email: str):
+    # Fetch user ID
+    user = await users.get_user_by_email(user_email, db)
+    user_id = int(user["id_utilisateur"])
 
     slope = 0.0
     intercept = 0.0
@@ -59,11 +66,11 @@ async def calculate_rpe(payload: schemas.ComputeRpeRequest, db: Session):
             table_name="profil_vbt",
             columns=["slope", "intercept"],
             conditions={
-                "id_utilisateur": payload.idutilisateur,
-                "id_exercice": payload.idexercice
+                "id_utilisateur": user_id,
+                "id_exercice": int(payload.idexercice)
             }
         )
-        data = await execute_generic_query(req, db)
+        data = await query.execute_generic_query(req, db)
         if data:
             slope = float(data[0]["slope"])
             intercept = float(data[0]["intercept"])
@@ -78,23 +85,27 @@ async def calculate_rpe(payload: schemas.ComputeRpeRequest, db: Session):
             "speed": payload.speed, 
             "slope": slope, 
             "intercept": intercept,
-            "idutilisateur": payload.idutilisateur,
+            "idutilisateur": user_id,
             "idexercice": payload.idexercice
         }
     }
 
-async def calculate_weight(payload: schemas.PoidsRPE, db: Session):
+async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: str):
+    # Fetch user ID
+    user = await users.get_user_by_email(user_email, db)
+    user_id = int(user["id_utilisateur"])
+
     RM1 = 0.0
     try:
         req = schemas.GenericQueryRequest(
             table_name="profil_vbt",
             columns=["current_1rm"],
             conditions={
-                "id_utilisateur": payload.idutilisateur,
-                "id_exercice": payload.idexercice
+                "id_utilisateur": user_id,
+                "id_exercice": int(payload.idexercice)
             }
         )
-        data = await execute_generic_query(req, db)
+        data = await query.execute_generic_query(req, db)
         if data:
             RM1 = float(data[0]["current_1rm"])
     except Exception as e:
@@ -111,7 +122,7 @@ async def calculate_weight(payload: schemas.PoidsRPE, db: Session):
                 "reps": payload.nbrep
             }
         )
-        data = await execute_generic_query(req, db)
+        data = await query.execute_generic_query(req, db)
         if data:
             pourcentage = float(data[0]["percentage"])
     except Exception as e:
@@ -126,7 +137,7 @@ async def calculate_weight(payload: schemas.PoidsRPE, db: Session):
         "inputs": {
             "rpe": payload.rpe,
             "nbrep": payload.nbrep,
-            "idutilisateur": payload.idutilisateur,
+            "idutilisateur": user_id,
             "idexercice": payload.idexercice
         }
     }

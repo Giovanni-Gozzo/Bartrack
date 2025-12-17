@@ -1,7 +1,43 @@
-from sqlalchemy import Table, select, MetaData, update
+from sqlalchemy import Table, select, MetaData, update, insert
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from api import schemas, database
+
+async def execute_generic_create(request: schemas.GenericCreateRequest, db: Session):
+    """
+    Executes an INSERT query on the specified table.
+    """
+    # Check if table is already loaded in metadata
+    if request.table_name in database.metadata.tables:
+        table = database.metadata.tables[request.table_name]
+    else:
+        try:
+            table = Table(request.table_name, database.metadata, autoload_with=database.engine)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Table '{request.table_name}' not found or error loading it: {str(e)}")
+
+    # Validate columns
+    for col_name in request.data.keys():
+        if col_name not in table.columns:
+            raise HTTPException(status_code=400, detail=f"Column '{col_name}' not found in table '{request.table_name}'")
+
+    stmt = insert(table).values(request.data)
+    
+    # Try to return the inserted row (works with Postgres)
+    try:
+        stmt = stmt.returning(table)
+    except:
+        pass # Fallback if not supported (though we know it's postgres)
+
+    try:
+        result = db.execute(stmt)
+        db.commit()
+        # Convert rows to list of dicts (should be size 1)
+        data = [dict(row) for row in result.mappings().all()]
+        return data
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 async def execute_generic_update(request: schemas.GenericUpdateRequest, db: Session):
     """
