@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from pydantic import BaseModel, Field,EmailStr
+from typing import List, Dict, Any,Optional
+from datetime import date
 
 class InitRequest(BaseModel):
     idutilisateur: str = Field(..., description="Identifiant unique de l'utilisateur")
@@ -29,3 +30,12 @@ class GenericUpdateRequest(BaseModel):
     table_name: str
     updates: Dict[str, Any]
     conditions: Dict[str, Any] = {}
+
+class UserCreate(BaseModel):
+    nom: str
+    prenom: str
+    email: EmailStr
+    mot_de_passe: str
+    date_naissance: date
+    poids_corps: float
+    sexe: str

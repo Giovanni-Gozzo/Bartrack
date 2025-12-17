@@ -1,0 +1,20 @@
+# Use an official Python runtime as a parent image
+FROM python:3.13-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file into the container at /app
+COPY requirement.txt .
+
+# Install any needed packages specified in requirement.txt
+RUN pip install --no-cache-dir -r requirement.txt
+
+# Copy the api directory contents into the container at /app/api
+COPY api/ api/
+
+# Make port 8000 available to the world outside this container
+EXPOSE 8000
+
+# Run app.py when the container launches
+CMD ["uvicorn", "api.main2:app", "--host", "0.0.0.0", "--port", "8000"]
