@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from api.database import get_db
 from api import schemas, auth
-from api.services import calculations, query, users, exercices
+from api.services import calculations, query, users, exercices, seances
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -127,6 +127,26 @@ async def update_exercice(exercice_id: int, exercice_update: schemas.ExerciceUpd
 @app.delete("/exercices/{exercice_id}", tags=["Exercices"], summary="Delete an exercice")
 async def delete_exercice(exercice_id: int, db: Session = Depends(get_db), admin_email: str = Depends(auth.require_admin)):
     return await exercices.delete_exercice(exercice_id, db)
+
+@app.get("/seances/", tags=["Séances"], summary="Get all seances for current user")
+async def get_all_seances(db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seances.get_all_seances(db, current_user)
+
+@app.get("/seances/{seance_id}", tags=["Séances"], summary="Get a seance by ID")
+async def get_seance(seance_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seances.get_seance_by_id(seance_id, db, current_user)
+
+@app.post("/seances/", tags=["Séances"], summary="Create a new seance")
+async def create_seance(seance: schemas.SeanceCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seances.create_seance(seance, db, current_user)
+
+@app.put("/seances/{seance_id}", tags=["Séances"], summary="Update a seance")
+async def update_seance(seance_id: int, seance_update: schemas.SeanceUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seances.update_seance(seance_id, seance_update, db, current_user)
+
+@app.delete("/seances/{seance_id}", tags=["Séances"], summary="Delete a seance")
+async def delete_seance(seance_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seances.delete_seance(seance_id, db, current_user)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

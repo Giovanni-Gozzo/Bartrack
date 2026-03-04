@@ -65,6 +65,7 @@ class UserUpdate(BaseModel):
     prenom: Optional[str] = None
     date_naissance: Optional[date] = None
     poids_corps: Optional[float] = None
+    sexe: Optional[str] = None
 
 class ExerciceCreate(BaseModel):
     nom: str
@@ -75,4 +76,14 @@ class ExerciceUpdate(BaseModel):
 class ExerciceResponse(BaseModel):
     id_exercice: int
     nom: str
-    sexe: Optional[str] = None
+
+class SeanceCreate(BaseModel):
+    date_seance: date = Field(default_factory=date.today)
+
+class SeanceUpdate(BaseModel):
+    date_seance: Optional[date] = None
+
+class SeanceResponse(BaseModel):
+    id_seance: int
+    id_utilisateur: int
+    date_seance: date
