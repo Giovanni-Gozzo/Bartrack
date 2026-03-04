@@ -30,7 +30,7 @@ async def register_new_user(user: schemas.UserCreate, db: Session):
     result = await query.execute_generic_create(create_req, db)
     
     if result:
-        return {"message": "coucou c'est créé"}
+        return "coucou c'est créé"
     raise HTTPException(status_code=500, detail="Failed to create user")
 
 async def get_user_by_email(email: str, db: Session):

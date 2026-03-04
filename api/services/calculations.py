@@ -90,12 +90,14 @@ async def calculate_rpe(payload: schemas.ComputeRpeRequest, db: Session, user_em
         }
     }
 
-async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: str):
+async def calculate_daily_1rm(payload: schemas.Daily1rmRequest, db: Session, user_email: str):
     # Fetch user ID
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])
 
+    
     RM1 = 0.0
+    #1rm actuel
     try:
         req = schemas.GenericQueryRequest(
             table_name="profil_vbt",
@@ -110,8 +112,71 @@ async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: s
             RM1 = float(data[0]["current_1rm"])
     except Exception as e:
         print(f"Erreur recup 1RM: {e}")
-        RM1 = 0.0
     
+    intensity = payload.poidsbarre / RM1 if RM1 > 0 else 0.0
+
+    rpetheorique = 0.0
+    #rpe théorique
+    if intensity > 0:
+        try:
+            req = schemas.GenericQueryRequest(
+                table_name="ref_rpe_table",
+                columns=["rpe"],
+                conditions={
+                    "percentage": intensity,
+                    "reps": payload.nbrep
+                }
+            )
+            data = await query.execute_generic_query(req, db)
+            if data:
+                rpetheorique = float(data[0]["rpe"])
+        except Exception as e:
+            print(f"Erreur recup rpetheorique: {e}")
+    
+    #rpe reel
+    payload_rpe = schemas.ComputeRpeRequest(
+        idexercice=payload.idexercice,
+        speed=payload.vitesse
+    )
+    rperéel = await calculate_rpe(payload_rpe, db, user_email)
+
+    rmdaily = RM1
+    if rperéel["rpe"] > rpetheorique :
+        try:
+            req = schemas.GenericQueryRequest(
+                table_name="ref_rpe_table",
+                columns=["percentage"],
+                conditions={
+                    "rpe": rperéel["rpe"],
+                    "reps": payload.nbrep
+                }
+            )
+            data = await query.execute_generic_query(req, db)
+            if data:
+                pourcentage = float(data[0]["percentage"])
+        except Exception as e:
+            print(f"Erreur recup pourcentage: {e}")
+            pourcentage = 0.0
+        rmdaily = payload.poidsbarre / pourcentage
+            
+    return {
+        "rmdaily": rmdaily,
+        "inputs": {
+            "rpe": rperéel["rpe"],
+            "nbrep": payload.nbrep,
+            "idutilisateur": user_id,
+            "idexercice": payload.idexercice
+        }
+    }
+        
+
+    
+    
+    
+async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: str):
+    # Fetch user ID
+    user = await users.get_user_by_email(user_email, db)
+    user_id = int(user["id_utilisateur"])    
     pourcentage = 0.0
     try:
         req = schemas.GenericQueryRequest(
@@ -129,8 +194,8 @@ async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: s
         print(f"Erreur recup pourcentage: {e}")
         pourcentage = 0.0
 
-    print(f"RM1: {RM1}, pourcentage: {pourcentage}")
-    poids = pourcentage * RM1
+    print(f"RM1: {payload.RM1}, pourcentage: {pourcentage}")
+    poids = pourcentage * payload.RM1
     
     return {
         "poids": poids, 
