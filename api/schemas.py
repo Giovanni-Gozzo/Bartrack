@@ -17,7 +17,14 @@ class PoidsRPE(BaseModel):
     idexercice: str = Field(..., description="Id de l'exercice")
     rpe: float = Field(..., description="RPE perçu")
     nbrep: int = Field(..., description="Nombre de répétitions")
+    RM1: float = Field(..., description="1RM actuelle")
 
+class Daily1rmRequest(BaseModel):
+    idexercice: str = Field(..., description="Id de l'exercice")
+    nbrep: int = Field(..., description="Nombre de répétitions")
+    poidsbarre: float = Field(..., description="Poids de la barre")
+    vitesse: float = Field(..., description="Vitesse de la barre")
+    
 class GenericQueryRequest(BaseModel):
     table_name: str
     columns: List[str] = ["*"]

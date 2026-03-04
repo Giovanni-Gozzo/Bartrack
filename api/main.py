@@ -5,6 +5,7 @@ from api.database import get_db
 from api import schemas, auth
 from api.services import calculations, query, users
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
 
 app = FastAPI()
 
@@ -79,7 +80,9 @@ async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db))
 async def rm1_users(users_req: schemas.Rm1Users, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await users.rm1_users(users_req, db, current_user)
 
-from fastapi.security import OAuth2PasswordRequestForm
+@app.post("/daily_1rm/")
+async def daily_1rm(users_req: schemas.Daily1rmRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await calculations.calculate_daily_1rm(users_req, db, current_user)
 
 @app.post("/login", summary="Login user")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
