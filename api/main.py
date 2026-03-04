@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from api.database import get_db
 from api import schemas, auth
-from api.services import calculations, query, users
+from api.services import calculations, query, users, exercices
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -27,6 +27,7 @@ async def hello():
 
 @app.post(
     "/initialize",
+    tags=["Calculations"],
     summary="Initialize the system with given parameters",
     description=(
         "Calcule le slope et l'intercept à partir des deux paires (RPE, vitesse). "
@@ -39,6 +40,7 @@ async def initialize(payload: schemas.InitRequest, db: Session = Depends(get_db)
 
 @app.post(
     "/compute_rpe",
+    tags=["Calculations"],
     summary="Compute RPE from speed, slope and intercept",
     description="Calcule le RPE selon la formule rpe = slope * speed + intercept",
 )
@@ -47,44 +49,53 @@ async def compute_rpe(payload: schemas.ComputeRpeRequest, db: Session = Depends(
 
 @app.post(
     "/compute_weight",
+    tags=["Calculations"],
     summary="Compute weight from 1RM and RPE")
 async def compute_weight(payload: schemas.PoidsRPE, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await calculations.calculate_weight(payload, db, current_user)
 
-@app.post("/generic_query", summary="Generic database query")
+@app.post("/generic_query", tags=["Database Queries"], summary="Generic database query")
 async def generic_query(request: schemas.GenericQueryRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     """
     Executes a SELECT query on the specified table.
     """
     return await query.execute_generic_query(request, db)
 
-@app.post("/generic_update", summary="Generic database update")
+@app.post("/generic_update", tags=["Database Queries"], summary="Generic database update")
 async def generic_update(request: schemas.GenericUpdateRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     """
     Executes an UPDATE query on the specified table.
     """
     return await query.execute_generic_update(request, db)
 
-@app.post("/generic_create", summary="Generic database create")
+@app.post("/generic_create", tags=["Database Queries"], summary="Generic database create")
 async def generic_create(request: schemas.GenericCreateRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     """
     Executes an INSERT query on the specified table.
     """
     return await query.execute_generic_create(request, db)
 
-@app.post("/users/")
+@app.post("/users/", tags=["Utilisateurs"])
 async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return await users.register_new_user(user, db)
 
-@app.post("/rm1_users/")
+@app.get("/users/me", tags=["Utilisateurs"], summary="Get current user profile")
+async def get_profile(db: Session = Depends(get_db), current_user_email: str = Depends(auth.get_current_user)):
+    return await users.get_current_user_profile(current_user_email, db)
+
+@app.put("/users/me", tags=["Utilisateurs"], summary="Update current user profile")
+async def update_profile(user_update: schemas.UserUpdate, db: Session = Depends(get_db), current_user_email: str = Depends(auth.get_current_user)):
+    return await users.update_user_profile(user_update, db, current_user_email)
+
+@app.post("/rm1_users/", tags=["Calculations"])
 async def rm1_users(users_req: schemas.Rm1Users, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await users.rm1_users(users_req, db, current_user)
 
-@app.post("/daily_1rm/")
+@app.post("/daily_1rm/", tags=["Calculations"])
 async def daily_1rm(users_req: schemas.Daily1rmRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await calculations.calculate_daily_1rm(users_req, db, current_user)
 
-@app.post("/login", summary="Login user")
+@app.post("/login", tags=["Authentification"], summary="Login user")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
     Compatible avec le bouton 'Authorize' du Swagger UI.
@@ -96,6 +107,26 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         mot_de_passe=form_data.password
     )
     return await users.authenticate_user(login_req, db)
+
+@app.get("/exercices/", tags=["Exercices"], summary="Get all exercices")
+async def get_all_exercices(db: Session = Depends(get_db)):
+    return await exercices.get_all_exercices(db)
+
+@app.get("/exercices/{exercice_id}", tags=["Exercices"], summary="Get an exercice by ID")
+async def get_exercice(exercice_id: int, db: Session = Depends(get_db)):
+    return await exercices.get_exercice_by_id(exercice_id, db)
+
+@app.post("/exercices/", tags=["Exercices"], summary="Create a new exercice")
+async def create_exercice(exercice: schemas.ExerciceCreate, db: Session = Depends(get_db), admin_email: str = Depends(auth.require_admin)):
+    return await exercices.create_exercice(exercice, db)
+
+@app.put("/exercices/{exercice_id}", tags=["Exercices"], summary="Update an exercice")
+async def update_exercice(exercice_id: int, exercice_update: schemas.ExerciceUpdate, db: Session = Depends(get_db), admin_email: str = Depends(auth.require_admin)):
+    return await exercices.update_exercice(exercice_id, exercice_update, db)
+
+@app.delete("/exercices/{exercice_id}", tags=["Exercices"], summary="Delete an exercice")
+async def delete_exercice(exercice_id: int, db: Session = Depends(get_db), admin_email: str = Depends(auth.require_admin)):
+    return await exercices.delete_exercice(exercice_id, db)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

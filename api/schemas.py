@@ -35,6 +35,10 @@ class GenericUpdateRequest(BaseModel):
     updates: Dict[str, Any]
     conditions: Dict[str, Any] = {}
 
+class GenericDeleteRequest(BaseModel):
+    table_name: str
+    conditions: Dict[str, Any]
+
 class GenericCreateRequest(BaseModel):
     table_name: str
     data: Dict[str, Any]
@@ -55,3 +59,20 @@ class Rm1Users(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     mot_de_passe: str
+
+class UserUpdate(BaseModel):
+    nom: Optional[str] = None
+    prenom: Optional[str] = None
+    date_naissance: Optional[date] = None
+    poids_corps: Optional[float] = None
+
+class ExerciceCreate(BaseModel):
+    nom: str
+
+class ExerciceUpdate(BaseModel):
+    nom: Optional[str] = None
+
+class ExerciceResponse(BaseModel):
+    id_exercice: int
+    nom: str
+    sexe: Optional[str] = None

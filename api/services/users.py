@@ -36,13 +36,46 @@ async def register_new_user(user: schemas.UserCreate, db: Session):
 async def get_user_by_email(email: str, db: Session):
     req = schemas.GenericQueryRequest(
         table_name="utilisateur",
-        columns=["id_utilisateur", "email"],
+        columns=["id_utilisateur", "email", "nom", "prenom", "date_naissance", "poids_corps", "sexe", "role"],
         conditions={"email": email}
     )
     users_found = await query.execute_generic_query(req, db)
     if not users_found:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
     return users_found[0]
+
+async def get_current_user_profile(user_email: str, db: Session):
+    try:
+        return await get_user_by_email(user_email, db)
+    except Exception as e:
+        print(f"Error fetching current user profile: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve user profile")
+
+async def update_user_profile(user_update: schemas.UserUpdate, db: Session, user_email: str):
+    try:
+        current_user = await get_user_by_email(user_email, db)
+        user_id = int(current_user["id_utilisateur"])
+        
+        updates = {k: v for k, v in user_update.model_dump().items() if v is not None}
+        
+        if not updates:
+            return current_user
+                
+        update_req = schemas.GenericUpdateRequest(
+            table_name="utilisateur",
+            updates=updates,
+            conditions={"id_utilisateur": user_id}
+        )
+        await query.execute_generic_update(update_req, db)
+        
+        updated_user = await get_user_by_email(user_email, db)
+        return updated_user
+        
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"Error in update_user_profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Échec de la mise à jour du profil: {str(e)}")
 
 async def rm1_users(users:schemas.Rm1Users, db: Session, user_email: str):
     try:
@@ -85,7 +118,7 @@ async def authenticate_user(login_data: schemas.LoginRequest, db: Session):
         req = schemas.GenericQueryRequest(
             table_name="utilisateur",
             # We need password to verify, and other info to return
-            columns=["id_utilisateur", "mot_de_passe", "nom", "prenom", "email"],
+            columns=["id_utilisateur", "mot_de_passe", "nom", "prenom", "email", "role"],
             conditions={"email": login_data.email}
         )
         users_found = await query.execute_generic_query(req, db)
@@ -105,7 +138,7 @@ async def authenticate_user(login_data: schemas.LoginRequest, db: Session):
         # Generate token
         access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = auth.create_access_token(
-            data={"sub": user["email"]}, expires_delta=access_token_expires
+            data={"sub": user["email"], "role": user.get("role")}, expires_delta=access_token_expires
         )
         
         return {

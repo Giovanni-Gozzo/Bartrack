@@ -107,3 +107,41 @@ async def execute_generic_query(request: schemas.GenericQueryRequest, db: Sessio
         return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+async def execute_generic_delete(request: schemas.GenericDeleteRequest, db: Session):
+    """
+    Executes a DELETE query on the specified table.
+    """
+    from sqlalchemy import delete
+    
+    # Check if table is already loaded in metadata
+    if request.table_name in database.metadata.tables:
+        table = database.metadata.tables[request.table_name]
+    else:
+        try:
+            table = Table(request.table_name, database.metadata, autoload_with=database.engine)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Table '{request.table_name}' not found or error loading it: {str(e)}")
+
+    if not request.conditions:
+        raise HTTPException(status_code=400, detail="DELETE operation requires condition(s) to avoid deleting all data")
+        
+    stmt = delete(table)
+
+    # Add conditions
+    for col_name, value in request.conditions.items():
+        if col_name not in table.columns:
+            raise HTTPException(status_code=400, detail=f"Column '{col_name}' used in condition not found")
+        stmt = stmt.where(table.columns[col_name] == value)
+
+    try:
+        result = db.execute(stmt)
+        db.commit()
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="No row matched the given conditions for deletion")
+        return {"rows_affected": result.rowcount, "message": "Delete successful"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
