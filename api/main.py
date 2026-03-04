@@ -72,11 +72,11 @@ async def generic_create(request: schemas.GenericCreateRequest, db: Session = De
     """
     return await query.execute_generic_create(request, db)
 
-@app.post("/users/", response_model=schemas.UserCreate)
+@app.post("/users/")
 async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return await users.register_new_user(user, db)
 
-@app.post("/rm1_users/", response_model=schemas.Rm1Users)
+@app.post("/rm1_users/")
 async def rm1_users(users_req: schemas.Rm1Users, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await users.rm1_users(users_req, db, current_user)
 
