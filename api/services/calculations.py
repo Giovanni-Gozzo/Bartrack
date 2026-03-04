@@ -142,6 +142,7 @@ async def calculate_daily_1rm(payload: schemas.Daily1rmRequest, db: Session, use
 
     rmdaily = RM1
     if rperéel["rpe"] > rpetheorique :
+        pourcentage = 0.0
         try:
             req = schemas.GenericQueryRequest(
                 table_name="ref_rpe_table",
@@ -156,8 +157,9 @@ async def calculate_daily_1rm(payload: schemas.Daily1rmRequest, db: Session, use
                 pourcentage = float(data[0]["percentage"])
         except Exception as e:
             print(f"Erreur recup pourcentage: {e}")
-            pourcentage = 0.0
-        rmdaily = payload.poidsbarre / pourcentage
+        
+        if pourcentage > 0:
+            rmdaily = payload.poidsbarre / pourcentage
             
     return {
         "rmdaily": rmdaily,
