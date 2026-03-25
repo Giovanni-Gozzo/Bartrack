@@ -258,5 +258,20 @@ async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Sessio
     """
     return await programmes.create_full_programme(payload, db, current_user)
 
+@app.get("/programmes/{programme_id}/full", response_model=schemas.ProgrammeFullResponse, tags=["Programmes"])
+async def get_full_programme(programme_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    """
+    Récupère un programme complet avec tous ses exercices.
+    """
+    return await programmes.get_full_programme(programme_id, db, current_user)
+
+@app.put("/programmes/{programme_id}/full", response_model=schemas.ProgrammeFullResponse, tags=["Programmes"])
+async def update_full_programme(programme_id: int, payload: schemas.ProgrammeFullUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    """
+    Met à jour un programme (infos et liste d'exercices) en une seule fois.
+    La synchronisation des exercices remplace l'ancienne liste par la nouvelle.
+    """
+    return await programmes.update_full_programme(programme_id, payload, db, current_user)
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

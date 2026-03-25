@@ -230,5 +230,10 @@ class ProgrammeFullCreate(BaseModel):
     description: Optional[str] = None
     exercices: List[ProgrammeExerciceFullCreate]
 
+class ProgrammeFullUpdate(BaseModel):
+    nom_programme: Optional[str] = None
+    description: Optional[str] = None
+    exercices: Optional[List[ProgrammeExerciceFullCreate]] = None
+
 class ProgrammeFullResponse(ProgrammeResponse):
     exercices: List[ProgrammeExerciceResponse]

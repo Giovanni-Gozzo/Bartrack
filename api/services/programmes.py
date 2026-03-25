@@ -154,3 +154,51 @@ async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Sessio
         **programme,
         "exercices": created_exercises
     }
+
+async def get_full_programme(programme_id: int, db: Session, user_email: str):
+    # 1. Get programme metadata
+    programme = await get_programme(programme_id, db, user_email)
+    
+    # 2. Get exercises
+    exercises = await get_programme_exercices(programme_id, db, user_email)
+    
+    return {
+        **programme,
+        "exercices": exercises
+    }
+
+async def update_full_programme(programme_id: int, payload: schemas.ProgrammeFullUpdate, db: Session, user_email: str):
+    # 1. Update programme metadata if provided
+    if payload.nom_programme is not None or payload.description is not None:
+        prog_update = schemas.ProgrammeUpdate(
+            nom_programme=payload.nom_programme,
+            description=payload.description
+        )
+        await update_programme(programme_id, payload=prog_update, db=db, user_email=user_email)
+    
+    # 2. Update exercises if provided
+    if payload.exercices is not None:
+        # Simplest approach for "Full Update": Delete existing and recreate
+        # This ensures the list matches exactly the input (order, content)
+        
+        # Get current exercises to delete them one by one (to trigger any business logic if needed)
+        # or use a generic delete if we had one for multiple rows.
+        current_exos = await get_programme_exercices(programme_id, db, user_email)
+        for exo in current_exos:
+            await delete_programme_exercice(exo["id"], db, user_email)
+            
+        # Create new ones
+        for exo_data in payload.exercices:
+            pe_payload = schemas.ProgrammeExerciceCreate(
+                id_programme=programme_id,
+                id_exercice=exo_data.id_exercice,
+                ordre_passage=exo_data.ordre_passage,
+                nombre_series=exo_data.nombre_series,
+                nombre_reps=exo_data.nombre_reps,
+                charge_prevue=exo_data.charge_prevue,
+                rpe_cible=exo_data.rpe_cible
+            )
+            await create_programme_exercice(pe_payload, db, user_email)
+            
+    # 3. Return the updated full programme
+    return await get_full_programme(programme_id, db, user_email)
