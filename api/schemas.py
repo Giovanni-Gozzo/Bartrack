@@ -82,7 +82,7 @@ class SeanceCreate(BaseModel):
 
 class SeanceUpdate(BaseModel):
     date_seance: Optional[date] = None
-
+    
 class SeanceResponse(BaseModel):
     id_seance: int
     id_utilisateur: int
