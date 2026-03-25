@@ -23,6 +23,18 @@ app.add_middleware(
 async def hello():
     return {"message": "Hello World"}
 
+@app.post(
+    "/initialize",
+    tags=["Calculations"],
+    summary="Initialize the system with given parameters",
+    description=(
+        "Calcule le slope et l'intercept à partir des deux paires (RPE, vitesse). "
+        "La formule est: slope = (rpe_high - rpe_low) / (speed_high - speed_low). "
+        "Intercept = rpe_high - slope * speed_high."
+    ),
+)
+async def initialize(payload: schemas.InitRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await calculations.initialize_profile(payload, db, current_user)
 
 @app.post(
     "/compute_rpe",
