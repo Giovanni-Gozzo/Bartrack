@@ -258,6 +258,13 @@ async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Sessio
     """
     return await programmes.create_full_programme(payload, db, current_user)
 
+@app.get("/programmes/full", response_model=list[schemas.ProgrammeFullResponse], tags=["Programmes"])
+async def get_my_full_programmes(db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    """
+    Récupère TOUS les programmes de l'utilisateur avec leurs exercices respectifs.
+    """
+    return await programmes.get_my_full_programmes(db, current_user)
+
 @app.get("/programmes/{programme_id}/full", response_model=schemas.ProgrammeFullResponse, tags=["Programmes"])
 async def get_full_programme(programme_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     """
