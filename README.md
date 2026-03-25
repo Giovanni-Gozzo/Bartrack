@@ -8,7 +8,7 @@ Bartrack est conçue pour la gestion et le suivi des entraînements de musculati
 
 L'API permet de suivre des utilisateurs, de gérer un catalogue d'exercices, d'organiser des séances d'entraînement (exercices, séries, répétitions) et fournit de nombreux endpoints pour calculer automatiquement les charges, RPE (Rate of Perceived Exertion), 1RM (1 Répétition Maximale) et profils Force-Vitesse personnalisés.
 
-Elle est construite en Python avec le framework **FastAPI** et utilise une base de données relationnelle **PostgresSQL** via **SQLAlchemy**.
+L'API est construite en Python avec le framework **FastAPI** et utilise une base de données relationnelle **PostgresSQL** via **SQLAlchemy**.
 
 ---
 
