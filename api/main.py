@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from api.database import get_db
 from api import schemas, auth
-from api.services import calculations, query, users, exercices, seances
+from api.services import calculations, query, users, exercices, seances, seance_exos, profil_vbt
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -147,6 +147,46 @@ async def update_seance(seance_id: int, seance_update: schemas.SeanceUpdate, db:
 @app.delete("/seances/{seance_id}", tags=["Séances"], summary="Delete a seance")
 async def delete_seance(seance_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await seances.delete_seance(seance_id, db, current_user)
+
+@app.get("/seances/{seance_id}/exos", tags=["Séances Exos"], summary="Get all exercices for a seance")
+async def get_seance_exos(seance_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seance_exos.get_all_seance_exos_for_seance(seance_id, db, current_user)
+
+@app.get("/seance_exos/{id_seance_exo}", tags=["Séances Exos"], summary="Get a seance_exo by ID")
+async def get_seance_exo(id_seance_exo: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seance_exos.get_seance_exo_by_id(id_seance_exo, db, current_user)
+
+@app.post("/seance_exos/", tags=["Séances Exos"], summary="Add an exercice to a seance")
+async def create_seance_exo(seance_exo: schemas.SeanceExoCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seance_exos.create_seance_exo(seance_exo, db, current_user)
+
+@app.put("/seance_exos/{id_seance_exo}", tags=["Séances Exos"], summary="Update a seance_exo")
+async def update_seance_exo(id_seance_exo: int, update_data: schemas.SeanceExoUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seance_exos.update_seance_exo(id_seance_exo, update_data, db, current_user)
+
+@app.delete("/seance_exos/{id_seance_exo}", tags=["Séances Exos"], summary="Delete a seance_exo")
+async def delete_seance_exo(id_seance_exo: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await seance_exos.delete_seance_exo(id_seance_exo, db, current_user)
+
+@app.get("/profil_vbt/", tags=["Profil VBT"], summary="Get all Profil VBT for current user")
+async def get_all_profils_vbt(db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await profil_vbt.get_all_profils_vbt(db, current_user)
+
+@app.get("/profil_vbt/{id_exercice}", tags=["Profil VBT"], summary="Get Profil VBT by exercice ID")
+async def get_profil_vbt(id_exercice: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await profil_vbt.get_profil_vbt_by_exercice(id_exercice, db, current_user)
+
+@app.post("/profil_vbt/", tags=["Profil VBT"], summary="Create a Profil VBT")
+async def create_profil_vbt(profil: schemas.ProfilVbtCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await profil_vbt.create_profil_vbt(profil, db, current_user)
+
+@app.put("/profil_vbt/{id_exercice}", tags=["Profil VBT"], summary="Update Profil VBT for an exercice")
+async def update_profil_vbt(id_exercice: int, update_data: schemas.ProfilVbtUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await profil_vbt.update_profil_vbt(id_exercice, update_data, db, current_user)
+
+@app.delete("/profil_vbt/{id_exercice}", tags=["Profil VBT"], summary="Delete Profil VBT for an exercice")
+async def delete_profil_vbt(id_exercice: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await profil_vbt.delete_profil_vbt(id_exercice, db, current_user)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field,EmailStr
 from typing import List, Dict, Any,Optional
-from datetime import date
+from datetime import date, datetime
 
 class InitRequest(BaseModel):
     idexercice: str = Field(..., description="Id de l'exercice")
@@ -87,3 +87,38 @@ class SeanceResponse(BaseModel):
     id_seance: int
     id_utilisateur: int
     date_seance: date
+
+class SeanceExoCreate(BaseModel):
+    id_seance: int
+    id_exercice: int
+    daily_1rm: Optional[float] = None
+
+class SeanceExoUpdate(BaseModel):
+    id_seance: Optional[int] = None
+    id_exercice: Optional[int] = None
+    daily_1rm: Optional[float] = None
+
+class SeanceExoResponse(BaseModel):
+    id_seance_exo: int
+    id_seance: int
+    id_exercice: int
+    daily_1rm: Optional[float] = None
+
+class ProfilVbtCreate(BaseModel):
+    id_exercice: int
+    current_1rm: Optional[float] = None
+    slope: Optional[float] = None
+    intercept: Optional[float] = None
+
+class ProfilVbtUpdate(BaseModel):
+    current_1rm: Optional[float] = None
+    slope: Optional[float] = None
+    intercept: Optional[float] = None
+
+class ProfilVbtResponse(BaseModel):
+    id_utilisateur: int
+    id_exercice: int
+    current_1rm: Optional[float] = None
+    slope: Optional[float] = None
+    intercept: Optional[float] = None
+    last_updated: Optional[datetime] = None

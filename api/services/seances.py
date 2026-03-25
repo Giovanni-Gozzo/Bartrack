@@ -44,7 +44,7 @@ async def create_seance(seance: schemas.SeanceCreate, db: Session, user_email: s
 async def update_seance(seance_id: int, seance_update: schemas.SeanceUpdate, db: Session, user_email: str):
     await get_seance_by_id(seance_id, db, user_email)
     
-    updates = {k: v for k, v in seance_update.model_dump().items() if v is not None}
+    updates = seance_update.model_dump(exclude_unset=True)
     if not updates:
         return await get_seance_by_id(seance_id, db, user_email)
         
