@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from api.database import get_db
 from api import schemas, auth
-from api.services import calculations, query, users, exercices, seances, seance_exos, profil_vbt, series, repetitions
+from api.services import calculations, query, users, exercices, seances, seance_exos, profil_vbt, series, repetitions, programmes
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -210,6 +210,46 @@ async def update_repetition(id_repetition: int, update_data: schemas.RepetitionU
 @app.delete("/repetitions/{id_repetition}", tags=["Répétitions"], summary="Delete a repetition")
 async def delete_repetition(id_repetition: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await repetitions.delete_repetition(id_repetition, db, current_user)
+
+# --- Programmes ---
+
+@app.post("/programmes/", response_model=schemas.ProgrammeResponse, tags=["Programmes"])
+async def create_programme(payload: schemas.ProgrammeCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.create_programme(payload, db, current_user)
+
+@app.get("/programmes/", response_model=list[schemas.ProgrammeResponse], tags=["Programmes"])
+async def get_my_programmes(db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.get_my_programmes(db, current_user)
+
+@app.get("/programmes/{programme_id}", response_model=schemas.ProgrammeResponse, tags=["Programmes"])
+async def get_programme(programme_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.get_programme(programme_id, db, current_user)
+
+@app.put("/programmes/{programme_id}", tags=["Programmes"])
+async def update_programme(programme_id: int, payload: schemas.ProgrammeUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.update_programme(programme_id, payload, db, current_user)
+
+@app.delete("/programmes/{programme_id}", tags=["Programmes"])
+async def delete_programme(programme_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.delete_programme(programme_id, db, current_user)
+
+# --- Programme Exercices ---
+
+@app.post("/programme_exercices/", response_model=schemas.ProgrammeExerciceResponse, tags=["Programme Exercices"])
+async def create_programme_exercice(payload: schemas.ProgrammeExerciceCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.create_programme_exercice(payload, db, current_user)
+
+@app.get("/programmes/{programme_id}/exercices", response_model=list[schemas.ProgrammeExerciceResponse], tags=["Programme Exercices"])
+async def get_programme_exercices(programme_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.get_programme_exercices(programme_id, db, current_user)
+
+@app.put("/programme_exercices/{pe_id}", tags=["Programme Exercices"])
+async def update_programme_exercice(pe_id: int, payload: schemas.ProgrammeExerciceUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.update_programme_exercice(pe_id, payload, db, current_user)
+
+@app.delete("/programme_exercices/{pe_id}", tags=["Programme Exercices"])
+async def delete_programme_exercice(pe_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await programmes.delete_programme_exercice(pe_id, db, current_user)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

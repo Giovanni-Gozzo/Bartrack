@@ -167,3 +167,50 @@ class RepetitionResponse(BaseModel):
 
 class RollingCalculationRequest(BaseModel):
     id_exercice: int
+
+# --- Programme Schemas ---
+class ProgrammeBase(BaseModel):
+    nom_programme: str
+    description: Optional[str] = None
+
+class ProgrammeCreate(ProgrammeBase):
+    pass
+
+class ProgrammeUpdate(BaseModel):
+    nom_programme: Optional[str] = None
+    description: Optional[str] = None
+
+class ProgrammeResponse(ProgrammeBase):
+    id: int
+    id_utilisateur: int
+    date_creation: datetime
+
+    class Config:
+        from_attributes = True
+
+# --- ProgrammeExercice Schemas ---
+class ProgrammeExerciceBase(BaseModel):
+    id_programme: int
+    id_exercice: int
+    ordre_passage: int
+    nombre_series: int
+    nombre_reps: int
+    charge_prevue: Optional[float] = None
+    rpe_cible: Optional[float] = None
+
+class ProgrammeExerciceCreate(ProgrammeExerciceBase):
+    pass
+
+class ProgrammeExerciceUpdate(BaseModel):
+    id_exercice: Optional[int] = None
+    ordre_passage: Optional[int] = None
+    nombre_series: Optional[int] = None
+    nombre_reps: Optional[int] = None
+    charge_prevue: Optional[float] = None
+    rpe_cible: Optional[float] = None
+
+class ProgrammeExerciceResponse(ProgrammeExerciceBase):
+    id: int
+
+    class Config:
+        from_attributes = True
