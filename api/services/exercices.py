@@ -44,10 +44,7 @@ async def create_exercice(exercice: schemas.ExerciceCreate, db: Session):
     
     result = await query.execute_generic_create(create_req, db)
     if result:
-        # result for generic_create often returns the created row or id? 
-        # the generic_create function has `return result_dict` if returning
-        # We will query it back just in case, or return success message
-        return {"message": "Exercice créé avec succès", "nom": exercice.nom}
+        return result[0]
     raise HTTPException(status_code=500, detail="Failed to create exercice")
 
 async def update_exercice(exercice_id: int, exercice_update: schemas.ExerciceUpdate, db: Session):

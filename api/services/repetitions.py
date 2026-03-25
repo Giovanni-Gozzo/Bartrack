@@ -41,7 +41,7 @@ async def create_repetition(repetition: schemas.RepetitionCreate, db: Session, u
     )
     result = await query.execute_generic_create(create_req, db)
     if result:
-        return {"message": "Répétition créée avec succès"}
+        return result[0]
     raise HTTPException(status_code=500, detail="Échec de la création de la répétition")
 
 async def update_repetition(id_repetition: int, repetition_update: schemas.RepetitionUpdate, db: Session, user_email: str):

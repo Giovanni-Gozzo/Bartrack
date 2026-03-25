@@ -14,7 +14,7 @@ async def create_programme(payload: schemas.ProgrammeCreate, db: Session, user_e
     
     req = schemas.GenericCreateRequest(table_name="programme", data=data)
     result = await query.execute_generic_create(req, db)
-    return result
+    return result[0]
 
 async def get_my_programmes(db: Session, user_email: str):
     user = await users.get_user_by_email(user_email, db)
@@ -76,7 +76,8 @@ async def create_programme_exercice(payload: schemas.ProgrammeExerciceCreate, db
     await get_programme(payload.id_programme, db, user_email)
     
     req = schemas.GenericCreateRequest(table_name="programme_exercice", data=payload.model_dump())
-    return await query.execute_generic_create(req, db)
+    result = await query.execute_generic_create(req, db)
+    return result[0]
 
 async def get_programme_exercices(programme_id: int, db: Session, user_email: str):
     # Verify programme ownership

@@ -30,11 +30,23 @@ async def initialize_profile(payload: schemas.InitRequest, db: Session, user_ema
 
 
     try:
+        # Check if exists
+        check_req = schemas.GenericQueryRequest(
+            table_name="profil_vbt",
+            columns=["id_utilisateur"],
+            conditions={"id_utilisateur": user_id, "id_exercice": int(payload.idexercice)}
+        )
+        existing = await query.execute_generic_query(check_req, db)
+        
+        if not existing:
+             raise HTTPException(status_code=404, detail="Profil VBT non trouvé. Veuillez d'abord définir votre 1RM pour cet exercice.")
+
         req = schemas.GenericUpdateRequest(
             table_name="profil_vbt",
             updates={
                 "slope": slope,
-                "intercept": intercept
+                "intercept": intercept,
+                "last_updated": datetime.now()
             },
             conditions={
                 "id_utilisateur": user_id,
@@ -42,8 +54,11 @@ async def initialize_profile(payload: schemas.InitRequest, db: Session, user_ema
             }
         )
         await query.execute_generic_update(req, db)
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        print(f"Erreur update DB: {e}")
+        print(f"Erreur DB profil_vbt: {e}")
+        raise HTTPException(status_code=500, detail="Erreur lors de la mise à jour du profil VBT")
 
     return {
         "slope": slope,

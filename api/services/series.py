@@ -47,7 +47,7 @@ async def create_serie(serie: schemas.SerieCreate, db: Session, user_email: str)
     )
     result = await query.execute_generic_create(create_req, db)
     if result:
-        return {"message": "Série créée avec succès"}
+        return result[0]
     raise HTTPException(status_code=500, detail="Échec de la création de la série")
 
 async def update_serie(id_serie: int, serie_update: schemas.SerieUpdate, db: Session, user_email: str):

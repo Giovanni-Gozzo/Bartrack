@@ -13,3 +13,5 @@ class Utilisateur(Base):
     date_naissance = Column(Date)
     poids_corps = Column(Float)
     sexe = Column(String)
+    role = Column(String)
+    id_coach = Column(Integer, ForeignKey("utilisateur.id_utilisateur"), nullable=True)

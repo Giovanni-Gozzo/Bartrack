@@ -183,7 +183,7 @@ class ProgrammeUpdate(BaseModel):
 class ProgrammeResponse(ProgrammeBase):
     id: int
     id_utilisateur: int
-    date_creation: datetime
+    date_creation: Optional[datetime] = None
 
     class Config:
         from_attributes = True
