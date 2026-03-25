@@ -2,6 +2,11 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from api import schemas
 from api.services import query, users
+from datetime import datetime, timedelta
+from api.database import engine, metadata
+from sqlalchemy import Table, select, and_
+from sklearn.linear_model import LinearRegression
+import numpy as np
 
 async def initialize_profile(payload: schemas.InitRequest, db: Session, user_email: str):
     # Fetch user ID
@@ -199,3 +204,110 @@ async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: s
             "idexercice": payload.idexercice
         }
     }
+
+async def compute_rolling_vbt_profile(payload: schemas.RollingCalculationRequest, db: Session, user_email: str):
+    # Fetch user ID
+    user = await users.get_user_by_email(user_email, db)
+    user_id = int(user["id_utilisateur"])
+    
+    # Load tables safely
+    try:
+        seance = Table("seance", metadata, autoload_with=engine)
+        seance_exo = Table("seance_exo", metadata, autoload_with=engine)
+        serie = Table("serie", metadata, autoload_with=engine)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database metadata error: {str(e)}")
+    
+    # Calculate date 30 days ago
+    date_30_days_ago = datetime.now() - timedelta(days=30)
+    
+    # Build query
+    stmt = (
+        select(serie.c.vitesse_fin_serie, serie.c.rpe_reel)
+        .select_from(
+            serie.join(seance_exo, serie.c.id_seance_exo == seance_exo.c.id_seance_exo)
+                 .join(seance, seance_exo.c.id_seance == seance.c.id_seance)
+        )
+        .where(
+            and_(
+                seance.c.id_utilisateur == user_id,
+                seance_exo.c.id_exercice == payload.id_exercice,
+                seance.c.date_seance >= date_30_days_ago.date(),
+                serie.c.echauffement == False,
+                serie.c.vitesse_fin_serie != None,
+                serie.c.vitesse_fin_serie > 0,
+                serie.c.rpe_reel != None
+            )
+        )
+    )
+    
+    # Execute query
+    result = db.execute(stmt).all()
+    
+    if len(result) < 2:
+        return {
+            "status": "skipped",
+            "message": "Pas assez de données valides sur les 30 derniers jours (minimum 2 séries requises).",
+            "data_points": len(result)
+        }
+        
+    # Extract X (Vitesse) and y (RPE)
+    # sklearn expects X as a 2D array, e.g. [[0.85], [0.82], ...]
+    X = np.array([float(r.vitesse_fin_serie) for r in result]).reshape(-1, 1)
+    y = np.array([float(r.rpe_reel) for r in result])
+    
+    # Compute Linear Regression
+    model = LinearRegression()
+    model.fit(X, y)
+    
+    nouvelle_slope = float(model.coef_[0])
+    nouvel_intercept = float(model.intercept_)
+    
+    # Update PROFIL_VBT
+    try:
+        # Check if exists
+        req_check = schemas.GenericQueryRequest(
+            table_name="profil_vbt",
+            columns=["id_utilisateur"],
+            conditions={"id_utilisateur": user_id, "id_exercice": payload.id_exercice}
+        )
+        existing = await query.execute_generic_query(req_check, db)
+        
+        now_iso = datetime.now().isoformat()
+        if existing:
+            # Update
+            update_req = schemas.GenericUpdateRequest(
+                table_name="profil_vbt",
+                updates={
+                    "slope": nouvelle_slope,
+                    "intercept": nouvel_intercept,
+                    "last_updated": now_iso
+                },
+                conditions={"id_utilisateur": user_id, "id_exercice": payload.id_exercice}
+            )
+            await query.execute_generic_update(update_req, db)
+        else:
+            # Create
+            create_req = schemas.GenericCreateRequest(
+                table_name="profil_vbt",
+                data={
+                    "id_utilisateur": user_id,
+                    "id_exercice": payload.id_exercice,
+                    "slope": nouvelle_slope,
+                    "intercept": nouvel_intercept,
+                    "last_updated": now_iso
+                }
+            )
+            await query.execute_generic_create(create_req, db)
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la mise à jour du profil VBT: {str(e)}")
+        
+    return {
+        "status": "success",
+        "message": "Profil VBT mis à jour avec le Rolling Calculation 30 jours.",
+        "data_points": len(result),
+        "new_slope": round(nouvelle_slope, 4),
+        "new_intercept": round(nouvel_intercept, 4)
+    }
+

@@ -95,6 +95,10 @@ async def rm1_users(users_req: schemas.Rm1Users, db: Session = Depends(get_db), 
 async def daily_1rm(users_req: schemas.Daily1rmRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await calculations.calculate_daily_1rm(users_req, db, current_user)
 
+@app.post("/rolling_vbt", tags=["Calculations"], summary="30-day Rolling VBT Profile Calculation")
+async def compute_rolling_vbt(payload: schemas.RollingCalculationRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await calculations.compute_rolling_vbt_profile(payload, db, current_user)
+
 @app.post("/login", tags=["Authentification"], summary="Login user")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """

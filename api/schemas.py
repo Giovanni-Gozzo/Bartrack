@@ -164,3 +164,6 @@ class RepetitionResponse(BaseModel):
     id_serie: int
     numero_rep: Optional[int] = None
     vitesse_mesuree: Optional[float] = None
+
+class RollingCalculationRequest(BaseModel):
+    id_exercice: int
