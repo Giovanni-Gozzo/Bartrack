@@ -123,3 +123,34 @@ async def delete_programme_exercice(pe_id: int, db: Session, user_email: str):
         conditions={"id": pe_id}
     )
     return await query.execute_generic_delete(req, db)
+
+async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Session, user_email: str):
+    # 1. Create the programme
+    prog_payload = schemas.ProgrammeCreate(
+        nom_programme=payload.nom_programme,
+        description=payload.description
+    )
+    programme = await create_programme(prog_payload, db, user_email)
+    programme_id = programme["id"]
+    
+    # 2. Create each exercise
+    created_exercises = []
+    for exo_data in payload.exercices:
+        pe_payload = schemas.ProgrammeExerciceCreate(
+            id_programme=programme_id,
+            id_exercice=exo_data.id_exercice,
+            ordre_passage=exo_data.ordre_passage,
+            nombre_series=exo_data.nombre_series,
+            nombre_reps=exo_data.nombre_reps,
+            charge_prevue=exo_data.charge_prevue,
+            rpe_cible=exo_data.rpe_cible
+        )
+        # We call the existing service to reuse logic (ownership check etc.)
+        exo = await create_programme_exercice(pe_payload, db, user_email)
+        created_exercises.append(exo)
+        
+    # 3. Return full structure
+    return {
+        **programme,
+        "exercices": created_exercises
+    }

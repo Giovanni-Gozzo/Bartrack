@@ -251,5 +251,12 @@ async def update_programme_exercice(pe_id: int, payload: schemas.ProgrammeExerci
 async def delete_programme_exercice(pe_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await programmes.delete_programme_exercice(pe_id, db, current_user)
 
+@app.post("/programmes/full", response_model=schemas.ProgrammeFullResponse, tags=["Programmes"])
+async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    """
+    Crée un programme et tous ses exercices associés en une seule fois.
+    """
+    return await programmes.create_full_programme(payload, db, current_user)
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

@@ -214,3 +214,21 @@ class ProgrammeExerciceResponse(ProgrammeExerciceBase):
 
     class Config:
         from_attributes = True
+
+# --- Unified Creation Schemas ---
+
+class ProgrammeExerciceFullCreate(BaseModel):
+    id_exercice: int
+    ordre_passage: int
+    nombre_series: int
+    nombre_reps: int
+    charge_prevue: Optional[float] = None
+    rpe_cible: Optional[float] = None
+
+class ProgrammeFullCreate(BaseModel):
+    nom_programme: str
+    description: Optional[str] = None
+    exercices: List[ProgrammeExerciceFullCreate]
+
+class ProgrammeFullResponse(ProgrammeResponse):
+    exercices: List[ProgrammeExerciceResponse]
