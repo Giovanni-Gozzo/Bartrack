@@ -9,9 +9,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:5173"
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -54,26 +52,7 @@ async def compute_rpe(payload: schemas.ComputeRpeRequest, db: Session = Depends(
 async def compute_weight(payload: schemas.PoidsRPE, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await calculations.calculate_weight(payload, db, current_user)
 
-@app.post("/generic_query", tags=["Database Queries"], summary="Generic database query")
-async def generic_query(request: schemas.GenericQueryRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
-    """
-    Executes a SELECT query on the specified table.
-    """
-    return await query.execute_generic_query(request, db)
 
-@app.post("/generic_update", tags=["Database Queries"], summary="Generic database update")
-async def generic_update(request: schemas.GenericUpdateRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
-    """
-    Executes an UPDATE query on the specified table.
-    """
-    return await query.execute_generic_update(request, db)
-
-@app.post("/generic_create", tags=["Database Queries"], summary="Generic database create")
-async def generic_create(request: schemas.GenericCreateRequest, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
-    """
-    Executes an INSERT query on the specified table.
-    """
-    return await query.execute_generic_create(request, db)
 
 @app.post("/users/", tags=["Utilisateurs"])
 async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
