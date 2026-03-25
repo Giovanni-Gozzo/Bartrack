@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from api.database import get_db
 from api import schemas, auth
-from api.services import calculations, query, users, exercices, seances, seance_exos, profil_vbt
+from api.services import calculations, query, users, exercices, seances, seance_exos, profil_vbt, series, repetitions
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -187,6 +187,46 @@ async def update_profil_vbt(id_exercice: int, update_data: schemas.ProfilVbtUpda
 @app.delete("/profil_vbt/{id_exercice}", tags=["Profil VBT"], summary="Delete Profil VBT for an exercice")
 async def delete_profil_vbt(id_exercice: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await profil_vbt.delete_profil_vbt(id_exercice, db, current_user)
+
+@app.get("/seance_exos/{id_seance_exo}/series", tags=["Séries"], summary="Get all series for a seance_exo")
+async def get_series_for_seance_exo(id_seance_exo: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await series.get_all_series_for_seance_exo(id_seance_exo, db, current_user)
+
+@app.get("/series/{id_serie}", tags=["Séries"], summary="Get a serie by ID")
+async def get_serie(id_serie: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await series.get_serie_by_id(id_serie, db, current_user)
+
+@app.post("/series/", tags=["Séries"], summary="Create a serie")
+async def create_serie(serie: schemas.SerieCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await series.create_serie(serie, db, current_user)
+
+@app.put("/series/{id_serie}", tags=["Séries"], summary="Update a serie")
+async def update_serie(id_serie: int, update_data: schemas.SerieUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await series.update_serie(id_serie, update_data, db, current_user)
+
+@app.delete("/series/{id_serie}", tags=["Séries"], summary="Delete a serie")
+async def delete_serie(id_serie: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await series.delete_serie(id_serie, db, current_user)
+
+@app.get("/series/{id_serie}/repetitions", tags=["Répétitions"], summary="Get all repetitions for a serie")
+async def get_repetitions_for_serie(id_serie: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await repetitions.get_all_repetitions_for_serie(id_serie, db, current_user)
+
+@app.get("/repetitions/{id_repetition}", tags=["Répétitions"], summary="Get a repetition by ID")
+async def get_repetition(id_repetition: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await repetitions.get_repetition_by_id(id_repetition, db, current_user)
+
+@app.post("/repetitions/", tags=["Répétitions"], summary="Create a repetition")
+async def create_repetition(repetition: schemas.RepetitionCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await repetitions.create_repetition(repetition, db, current_user)
+
+@app.put("/repetitions/{id_repetition}", tags=["Répétitions"], summary="Update a repetition")
+async def update_repetition(id_repetition: int, update_data: schemas.RepetitionUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await repetitions.update_repetition(id_repetition, update_data, db, current_user)
+
+@app.delete("/repetitions/{id_repetition}", tags=["Répétitions"], summary="Delete a repetition")
+async def delete_repetition(id_repetition: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    return await repetitions.delete_repetition(id_repetition, db, current_user)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

@@ -122,3 +122,45 @@ class ProfilVbtResponse(BaseModel):
     slope: Optional[float] = None
     intercept: Optional[float] = None
     last_updated: Optional[datetime] = None
+
+class SerieCreate(BaseModel):
+    id_seance_exo: int
+    charge_kg: Optional[float] = None
+    nombre_reps: Optional[int] = None
+    vitesse_fin_serie: Optional[float] = None
+    rpe_estime: Optional[float] = None
+    rpe_reel: Optional[float] = None
+    echauffement: Optional[bool] = False
+
+class SerieUpdate(BaseModel):
+    charge_kg: Optional[float] = None
+    nombre_reps: Optional[int] = None
+    vitesse_fin_serie: Optional[float] = None
+    rpe_estime: Optional[float] = None
+    rpe_reel: Optional[float] = None
+    echauffement: Optional[bool] = None
+
+class SerieResponse(BaseModel):
+    id: int
+    id_seance_exo: int
+    charge_kg: Optional[float] = None
+    nombre_reps: Optional[int] = None
+    vitesse_fin_serie: Optional[float] = None
+    rpe_estime: Optional[float] = None
+    rpe_reel: Optional[float] = None
+    echauffement: Optional[bool] = None
+
+class RepetitionCreate(BaseModel):
+    id_serie: int
+    numero_rep: Optional[int] = None
+    vitesse_mesuree: Optional[float] = None
+
+class RepetitionUpdate(BaseModel):
+    numero_rep: Optional[int] = None
+    vitesse_mesuree: Optional[float] = None
+
+class RepetitionResponse(BaseModel):
+    id: int
+    id_serie: int
+    numero_rep: Optional[int] = None
+    vitesse_mesuree: Optional[float] = None
