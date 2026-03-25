@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="bartrack.png" alt="Bartrack Banner" width="100%">
+  <img src="bartrack.png" alt="Bartrack Banner" height="125">
 </div>
 
 # Bartrack API
