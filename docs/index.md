@@ -29,7 +29,7 @@ hide:
 
 -   :material-api: **Référence Technique (API)**
 
-    Plongez dans le code source via la documentation autogénérée des services internes et algorithmes.
+    Plongez au coeur du code source via l'exploration autogénérée de l'ensemble des services internes et algorithmes scientifiques.
 
     [Explorer l'API](api/main.md){ .md-button }
 

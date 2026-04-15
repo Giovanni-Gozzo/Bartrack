@@ -67,6 +67,12 @@ plugins:
           options:
             show_source: true
             show_root_heading: true
+            docstring_style: google
+            merge_init_into_class: true
+            show_category_heading: true
+            members_order: alphabetical
+            separate_signature: true
+            show_signature_annotations: true
 
 nav:
   - Accueil: index.md
@@ -77,7 +83,10 @@ nav:
   - Référence API:
       - Routes Principales (FastAPI): api/main.md
       - Services Internes:
-          - Calculs & VBT: api/services/calculations.md
+          - Moteur Scientifique & Calculs:
+              - Vue d'ensemble: api/services/calc_overview.md
+              - Algorithmes VBT: api/services/calc_vbt.md
+              - RPE & 1RM: api/services/calc_rpe.md
           - Profil d'athlète (VBT): api/services/profil_vbt.md
           - Utilisateurs & Auth: api/services/users.md
           - Exercices Socles: api/services/exercices.md
