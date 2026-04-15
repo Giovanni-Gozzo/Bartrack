@@ -5,7 +5,7 @@ repo_name: Giovanni-Gozzo/Bartrack
 
 extra:
   announcement: >
-    🔥 Bienvenue sur la Documentation Officielle 1.0 de Bartrack ! Rejoignez-nous sur GitHub.
+    Bienvenue sur la Documentation Officielle de Bartrack !
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Giovanni-Gozzo/Bartrack
@@ -13,13 +13,13 @@ extra:
 theme:
   name: material
   palette:
-    - scheme: default # Mode jour
+    - scheme: default
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - scheme: slate # Mode nuit
+    - scheme: slate
       primary: indigo
       accent: indigo
       toggle:
