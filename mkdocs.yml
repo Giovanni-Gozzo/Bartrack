@@ -3,6 +3,13 @@ site_url: https://github.com/Giovanni-Gozzo/Bartrack
 repo_url: https://github.com/Giovanni-Gozzo/Bartrack
 repo_name: Giovanni-Gozzo/Bartrack
 
+extra:
+  announcement: >
+    🔥 Bienvenue sur la Documentation Officielle 1.0 de Bartrack ! Rejoignez-nous sur GitHub.
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Giovanni-Gozzo/Bartrack
+
 theme:
   name: material
   palette:
@@ -60,6 +67,9 @@ plugins:
 
 nav:
   - Accueil: index.md
+  - Guide de Démarrage:
+      - Lancer le Projet (Docker): getting-started/docker.md
+      - CI/CD & Déploiement: getting-started/deployment.md
   - Parcours Utilisateur: workflow.md
   - Référence API:
       - Routes Principales (FastAPI): api/main.md

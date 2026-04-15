@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+  - toc
+---
 <p align="center">
   <img src="bartrack.png" alt="Bartrack Logo" width="300" style="border-radius: 10px; margin-bottom: 2rem;"/>
 </p>
@@ -10,11 +15,17 @@
 
 <div class="grid cards" markdown>
 
+-   :material-rocket-launch: **Mise en Route (Getting Started)**
+
+    Instructions pour lancer l'application localement via Docker et comprendre l'infrastructure CI/CD sur le VPS.
+
+    [Guide de Démarrage](getting-started/docker.md){ .md-button .md-button--primary }
+
 -   :material-book-open-page-variant: **Découvrir le Fonctionnement**
 
     Comprendre finement comment s'articulent toutes les requêtes de bout en bout durant une séance d'entraînement.
 
-    [Parcours Utilisateur (Workflow)](workflow.md){ .md-button .md-button--primary }
+    [Parcours Utilisateur](workflow.md){ .md-button }
 
 -   :material-api: **Référence Technique (API)**
 
