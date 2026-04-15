@@ -1,0 +1,97 @@
+site_name: "Bartrack - Documentation"
+site_url: https://github.com/Giovanni-Gozzo/Bartrack
+repo_url: https://github.com/Giovanni-Gozzo/Bartrack
+repo_name: Giovanni-Gozzo/Bartrack
+
+extra:
+  announcement: >
+    Bienvenue sur la Documentation Officielle de Bartrack !
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Giovanni-Gozzo/Bartrack
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.top
+    - content.code.annotate
+    - content.tooltips
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - search
+  - social
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [.]
+          options:
+            show_source: true
+            show_root_heading: true
+            docstring_style: google
+            merge_init_into_class: true
+            show_category_heading: true
+            members_order: alphabetical
+            separate_signature: true
+            show_signature_annotations: true
+
+nav:
+  - Accueil: index.md
+  - Guide de Démarrage:
+      - Lancer le Projet (Docker): getting-started/docker.md
+      - CI/CD & Déploiement: getting-started/deployment.md
+  - Parcours Utilisateur: workflow.md
+  - Référence API:
+      - Routes Principales (FastAPI): api/main.md
+      - Services Internes:
+          - Moteur Scientifique & Calculs:
+              - Vue d'ensemble: api/services/calc_overview.md
+              - Algorithmes VBT: api/services/calc_vbt.md
+              - RPE & 1RM: api/services/calc_rpe.md
+          - Profil d'athlète (VBT): api/services/profil_vbt.md
+          - Utilisateurs & Auth: api/services/users.md
+          - Exercices Socles: api/services/exercices.md
+          - Programmes & Planification: api/services/programmes.md
+          - Création de Séances: api/services/seances.md
+          - Liaison Séance-Exercice: api/services/seance_exos.md
+          - Enregistrement des Séries: api/services/series.md
+          - Analyse des Répétitions: api/services/repetitions.md

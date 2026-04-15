@@ -5,6 +5,16 @@ from api import schemas, auth
 from api.services import query
 
 async def register_new_user(user: schemas.UserCreate, db: Session):
+    """
+    Enregistre un nouvel utilisateur lors de la procédure d'inscription.
+    
+    On s'assure que son email n'est pas déjà présent pour éviter les conflits
+    puis l'on hache le mot de passe avant insertion.
+    
+    Args:
+        user (schemas.UserCreate): Les données utilisateur fournies.
+        db (Session): Session BDD.
+    """
     try:
         check_req = schemas.GenericQueryRequest(
             table_name="utilisateur",
@@ -34,6 +44,13 @@ async def register_new_user(user: schemas.UserCreate, db: Session):
     raise HTTPException(status_code=500, detail="Failed to create user")
 
 async def get_user_by_email(email: str, db: Session):
+    """
+    Délivre les colonnes de l'utilisateur liées à son adresse mail.
+    
+    Args:
+        email (str): Son adresse de validation (critère de connexion).
+        db (Session): La base de données.
+    """
     req = schemas.GenericQueryRequest(
         table_name="utilisateur",
         columns=["id_utilisateur", "email", "nom", "prenom", "date_naissance", "poids_corps", "sexe", "role"],
@@ -45,6 +62,13 @@ async def get_user_by_email(email: str, db: Session):
     return users_found[0]
 
 async def get_current_user_profile(user_email: str, db: Session):
+    """
+    Utilise l'adresse fournie via JWT Token pour extraire le profil de l'user.
+    
+    Args:
+        user_email (str): La sub du Payload JWT.
+        db (Session): Session Active.
+    """
     try:
         return await get_user_by_email(user_email, db)
     except Exception as e:
@@ -52,6 +76,14 @@ async def get_current_user_profile(user_email: str, db: Session):
         raise HTTPException(status_code=500, detail="Failed to retrieve user profile")
 
 async def update_user_profile(user_update: schemas.UserUpdate, db: Session, user_email: str):
+    """
+    Actualisation des settings du profil par l'utilisateur (date de naissance, poids corps...).
+    
+    Args:
+        user_update (schemas.UserUpdate): Parametres a changer.
+        db (Session): Base.
+        user_email (str): Email extraite de route Auth.
+    """
     try:
         current_user = await get_user_by_email(user_email, db)
         user_id = int(current_user["id_utilisateur"])
@@ -77,7 +109,16 @@ async def update_user_profile(user_update: schemas.UserUpdate, db: Session, user
         print(f"Error in update_user_profile: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Échec de la mise à jour du profil: {str(e)}")
 
-async def rm1_users(users:schemas.Rm1Users, db: Session, user_email: str):
+async def rm1_users(users: schemas.Rm1Users, db: Session, user_email: str):
+    """
+    Déclare la Rep Max de référence (1RM) d'un utilisateur existant.
+    Si le profil_vbt associé à l'exo l'indique, on Update, sinon on Insert.
+    
+    Args:
+        users (schemas.Rm1Users): l'exo concerné et son nouveau point de rep max au format poids float.
+        db (Session): Session BDD en fonction.
+        user_email (str): User associé via Auth.
+    """
     try:
         # Get user ID
         current_user = await get_user_by_email(user_email, db)
@@ -113,6 +154,14 @@ async def rm1_users(users:schemas.Rm1Users, db: Session, user_email: str):
         raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
 
 async def authenticate_user(login_data: schemas.LoginRequest, db: Session):
+    """
+    Route de connexion interne qui vérifie le pwd via hache et émet un Token JWT
+    associé contenant l'Email en 'sub'. Role éventuel intégré.
+    
+    Args:
+        login_data (schemas.LoginRequest): L'email de formulaire avec mot de passe rentré au Login.
+        db (Session): Connexion SQL.
+    """
     try:
         # Fetch user by email
         req = schemas.GenericQueryRequest(
