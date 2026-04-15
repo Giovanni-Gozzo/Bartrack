@@ -7,14 +7,14 @@ theme:
   name: material
   palette:
     - scheme: default # Mode jour
-      primary: red
-      accent: deep orange
+      primary: indigo
+      accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate # Mode nuit
-      primary: red
-      accent: deep orange
+      primary: indigo
+      accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -30,6 +30,8 @@ theme:
     - content.tooltips
 
 markdown_extensions:
+  - attr_list
+  - md_in_html
   - admonition
   - pymdownx.details
   - pymdownx.inlinehilite
