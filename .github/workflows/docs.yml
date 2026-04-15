@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install "mkdocs<2" mkdocs-material "mkdocstrings[python]"
+          pip install "mkdocs<2" mkdocs-material "mkdocstrings[python]" pillow cairosvg
           pip install -r requirement.txt || echo "requirements file might be named differently or missing"
 
       - name: Deploy to GitHub Pages
