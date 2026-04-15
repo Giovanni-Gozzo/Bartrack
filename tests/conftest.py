@@ -110,6 +110,7 @@ programme_exercice = Table(
     Column("nombre_reps", Integer),
     Column("charge_prevue", Numeric(5, 2)),
     Column("rpe_cible", Numeric(3, 1)),
+    Column("echauffement", Boolean, default=False),
     extend_existing=True
 )
 

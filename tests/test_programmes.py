@@ -128,3 +128,42 @@ def test_get_programme_exercices(client, auth_headers):
     # Verify sorting by ordre_passage
     assert data[0]["ordre_passage"] == 1
     assert data[1]["ordre_passage"] == 2
+
+def test_create_programme_with_echauffement(client, auth_headers):
+    # 1. Create full programme with a warm-up exercise
+    payload = {
+        "nom_programme": "VBT Warmup Test",
+        "description": "Test with warmup",
+        "exercices": [
+            {
+                "id_exercice": 1,
+                "ordre_passage": 1,
+                "nombre_series": 2,
+                "nombre_reps": 10,
+                "charge_prevue": 50.0,
+                "rpe_cible": 5.0,
+                "echauffement": True
+            },
+            {
+                "id_exercice": 1,
+                "ordre_passage": 2,
+                "nombre_series": 3,
+                "nombre_reps": 5,
+                "charge_prevue": 100.0,
+                "rpe_cible": 8.0,
+                "echauffement": False
+            }
+        ]
+    }
+    
+    response = client.post("/programmes/full", json=payload, headers=auth_headers)
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    
+    assert data["nom_programme"] == "VBT Warmup Test"
+    assert len(data["exercices"]) == 2
+    
+    # Check that warmup is preserved
+    exos = sorted(data["exercices"], key=lambda x: x["ordre_passage"])
+    assert exos[0]["echauffement"] is True
+    assert exos[1]["echauffement"] is False
