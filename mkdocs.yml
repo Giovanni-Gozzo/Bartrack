@@ -36,4 +36,16 @@ plugins:
 
 nav:
   - Accueil: index.md
-  - Référence API: api.md
+  - Parcours Utilisateur: workflow.md
+  - Référence API:
+      - Routes Principales (FastAPI): api/main.md
+      - Services Internes:
+          - Calculs & VBT: api/services/calculations.md
+          - Profil d'athlète (VBT): api/services/profil_vbt.md
+          - Utilisateurs & Auth: api/services/users.md
+          - Exercices Socles: api/services/exercices.md
+          - Programmes & Planification: api/services/programmes.md
+          - Création de Séances: api/services/seances.md
+          - Liaison Séance-Exercice: api/services/seance_exos.md
+          - Enregistrement des Séries: api/services/series.md
+          - Analyse des Répétitions: api/services/repetitions.md
