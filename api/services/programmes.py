@@ -156,7 +156,6 @@ async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Sessio
     }
 
 async def get_full_programme(programme_id: int, db: Session, user_email: str):
-    # 1. Get programme metadata
     programme = await get_programme(programme_id, db, user_email)
     
     # 2. Get exercises
@@ -206,7 +205,8 @@ async def update_full_programme(programme_id: int, payload: schemas.ProgrammeFul
 async def get_my_full_programmes(db: Session, user_email: str):
     # 1. Get all basic programmes
     programmes = await get_my_programmes(db, user_email)
-    
+
+
     # 2. Enrich each with its exercises
     full_programmes = []
     for prog in programmes:

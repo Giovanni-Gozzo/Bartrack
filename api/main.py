@@ -211,6 +211,20 @@ async def update_repetition(id_repetition: int, update_data: schemas.RepetitionU
 async def delete_repetition(id_repetition: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await repetitions.delete_repetition(id_repetition, db, current_user)
 
+@app.get("/programmes/full", response_model=list[schemas.ProgrammeFullResponse], tags=["Programmes"])
+async def get_my_full_programmes(db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    """
+    Récupère TOUS les programmes de l'utilisateur avec leurs exercices respectifs.
+    """
+    return await programmes.get_my_full_programmes(db, current_user)
+
+@app.post("/programmes/full", response_model=schemas.ProgrammeFullResponse, tags=["Programmes"])
+async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
+    """
+    Crée un programme et tous ses exercices associés en une seule fois.
+    """
+    return await programmes.create_full_programme(payload, db, current_user)
+
 # --- Programmes ---
 
 @app.post("/programmes/", response_model=schemas.ProgrammeResponse, tags=["Programmes"])
@@ -250,20 +264,6 @@ async def update_programme_exercice(pe_id: int, payload: schemas.ProgrammeExerci
 @app.delete("/programme_exercices/{pe_id}", tags=["Programme Exercices"])
 async def delete_programme_exercice(pe_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return await programmes.delete_programme_exercice(pe_id, db, current_user)
-
-@app.post("/programmes/full", response_model=schemas.ProgrammeFullResponse, tags=["Programmes"])
-async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
-    """
-    Crée un programme et tous ses exercices associés en une seule fois.
-    """
-    return await programmes.create_full_programme(payload, db, current_user)
-
-@app.get("/programmes/full", response_model=list[schemas.ProgrammeFullResponse], tags=["Programmes"])
-async def get_my_full_programmes(db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
-    """
-    Récupère TOUS les programmes de l'utilisateur avec leurs exercices respectifs.
-    """
-    return await programmes.get_my_full_programmes(db, current_user)
 
 @app.get("/programmes/{programme_id}/full", response_model=schemas.ProgrammeFullResponse, tags=["Programmes"])
 async def get_full_programme(programme_id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
