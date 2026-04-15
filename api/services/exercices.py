@@ -4,6 +4,15 @@ from api import schemas
 from api.services import query
 
 async def get_all_exercices(db: Session):
+    """
+    Récupère la liste de tous les exercices disponibles dans l'application.
+    
+    Args:
+        db (Session): Session de la base de données.
+    
+    Returns:
+        List[dict]: Liste des exercices trouvés.
+    """
     req = schemas.GenericQueryRequest(
         table_name="exercice",
         columns=["id_exercice", "nom"]
@@ -12,6 +21,19 @@ async def get_all_exercices(db: Session):
     return exercices
 
 async def get_exercice_by_id(exercice_id: int, db: Session):
+    """
+    Récupère un exercice spécifique à partir de son identifiant.
+    
+    Args:
+        exercice_id (int): L'identifiant de l'exercice à rechercher.
+        db (Session): Session de la base de données.
+    
+    Returns:
+        dict: Les données de l'exercice.
+        
+    Raises:
+        HTTPException: Si l'exercice n'est pas trouvé (404).
+    """
     req = schemas.GenericQueryRequest(
         table_name="exercice",
         columns=["id_exercice", "nom"],
@@ -23,6 +45,21 @@ async def get_exercice_by_id(exercice_id: int, db: Session):
     return exercices_found[0]
 
 async def create_exercice(exercice: schemas.ExerciceCreate, db: Session):
+    """
+    Crée un nouvel exercice dans le système de référence de l'application.
+    
+    Vérifie au préalable si l'exercice n'existe pas déjà par son nom.
+    
+    Args:
+        exercice (schemas.ExerciceCreate): Les données de création de l'exercice.
+        db (Session): Session de la base de données.
+    
+    Returns:
+        dict: L'exercice nouvellement créé (nom et id).
+        
+    Raises:
+        HTTPException: Si un exercice avec ce nom existe déjà.
+    """
     try:
         check_req = schemas.GenericQueryRequest(
             table_name="exercice",
@@ -48,6 +85,19 @@ async def create_exercice(exercice: schemas.ExerciceCreate, db: Session):
     raise HTTPException(status_code=500, detail="Failed to create exercice")
 
 async def update_exercice(exercice_id: int, exercice_update: schemas.ExerciceUpdate, db: Session):
+    """
+    Met à jour un exercice existant (ex: changement de nom).
+    
+    Vérifie d'abord que l'exercice avec l'identifiant renseigné existe.
+    
+    Args:
+        exercice_id (int): Identifiant de l'exercice.
+        exercice_update (schemas.ExerciceUpdate): Nouvelles données.
+        db (Session): Session de la base de données.
+    
+    Returns:
+        dict: L'exercice mis à jour.
+    """
     # check if exists
     await get_exercice_by_id(exercice_id, db)
     
@@ -65,6 +115,16 @@ async def update_exercice(exercice_id: int, exercice_update: schemas.ExerciceUpd
     return await get_exercice_by_id(exercice_id, db)
 
 async def delete_exercice(exercice_id: int, db: Session):
+    """
+    Supprime un exercice de la base de données.
+    
+    Args:
+        exercice_id (int): Identifiant de l'exercice à supprimer.
+        db (Session): Session de la base de données.
+    
+    Returns:
+        dict: Message de confirmation de suppression.
+    """
     # Verify it exists
     await get_exercice_by_id(exercice_id, db)
     

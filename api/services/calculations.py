@@ -9,6 +9,23 @@ from sklearn.linear_model import LinearRegression
 import numpy as np
 
 async def initialize_profile(payload: schemas.InitRequest, db: Session, user_email: str):
+    """
+    Initialise le profil VBT (Velocity Based Training) pour un utilisateur et un exercice donné.
+    
+    Calcule la pente (slope) et l'ordonnée à l'origine (intercept) à partir de deux paires 
+    (RPE, Vitesse) fournies dans le payload, puis met à jour la base de données de l'utilisateur.
+    
+    Args:
+        payload (schemas.InitRequest): Les données contenant l'ID de l'exercice, les RPE et les vitesses.
+        db (Session): Session de base de données.
+        user_email (str): L'email de l'utilisateur effectuant la requête.
+        
+    Returns:
+        dict: Un dictionnaire contenant le slope, l'intercept et les données d'entrée.
+        
+    Raises:
+        HTTPException: Erreurs de validation (ex: RPE haut <= RPE bas) ou erreur base de données.
+    """
     # Fetch user ID
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])
@@ -74,6 +91,20 @@ async def initialize_profile(payload: schemas.InitRequest, db: Session, user_ema
     }
 
 async def calculate_rpe(payload: schemas.ComputeRpeRequest, db: Session, user_email: str):
+    """
+    Calcule le RPE estimé à l'aide du profil VBT d'un utilisateur pour une vitesse donnée.
+    
+    Utilise la formule: RPE = slope * speed + intercept.
+    Récupère le slope et l'intercept de l'utilisateur pour cet exercice depuis la BD.
+    
+    Args:
+        payload (schemas.ComputeRpeRequest): Payload contenant l'ID de l'exercice et la vitesse mesurée.
+        db (Session): Session de la base de données.
+        user_email (str): L'email de l'utilisateur courant.
+        
+    Returns:
+        dict: Dictionnaire contenant le RPE calculé.
+    """
     # Fetch user ID
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])
@@ -111,6 +142,20 @@ async def calculate_rpe(payload: schemas.ComputeRpeRequest, db: Session, user_em
     }
 
 async def calculate_daily_1rm(payload: schemas.Daily1rmRequest, db: Session, user_email: str):
+    """
+    Calcule l'1RM (rep max) quotidien (e-1RM) basé sur l'exercice du jour et sa vitesse.
+    
+    Cette fonction l'estime via la table de RPE et le calcul de la vitesse via le profil VBT.
+    Calcule l'écart par rapport à l'ancien 1RM de l'utilisateur.
+    
+    Args:
+        payload (schemas.Daily1rmRequest): Payload contenant l'ID de l'exercice, nombre de reps, masse, vitesse.
+        db (Session): Session de la base de données.
+        user_email (str): L'email de l'utilisateur.
+        
+    Returns:
+        dict: Contient le 1RM quotidien, le 1RM historique et la variation en pourcentage.
+    """
     # 1. Fetch User
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])
@@ -187,6 +232,19 @@ async def calculate_daily_1rm(payload: schemas.Daily1rmRequest, db: Session, use
     
     
 async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: str):
+    """
+    Calcule le poids à soulever pour atteindre un certain RPE et nombre de répétitions.
+    
+    Requête la table de référence RPE pour trouver le pourcentage du 1RM qui est demandé.
+    
+    Args:
+        payload (schemas.PoidsRPE): Données demandées incluant l'ID de l'exercice, RPE cible, nbr de reps et le 1RM.
+        db (Session): Session de la base de données.
+        user_email (str): L'email de l'utilisateur.
+        
+    Returns:
+        dict: Poids estimé calculé et données d'entrées.
+    """
     # Fetch user ID
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])    
@@ -221,6 +279,23 @@ async def calculate_weight(payload: schemas.PoidsRPE, db: Session, user_email: s
     }
 
 async def compute_rolling_vbt_profile(payload: schemas.RollingCalculationRequest, db: Session, user_email: str):
+    """
+    Calcule un profil VBT mis à jour avec la méthode de la régression linéaire sur 30 jours (Rolling Calculation).
+    
+    Récupère toutes les séries de l'utilisateur sur son exercice au cours des 30 derniers jours,
+    et actualise le slope et l'intercept dans la table profil_vbt via scikit-learn.
+    
+    Args:
+        payload (schemas.RollingCalculationRequest): Contient l'ID de l'exercice à traiter.
+        db (Session): Session de la base de données.
+        user_email (str): L'email de l'utilisateur.
+        
+    Returns:
+        dict: Résultat de la mise à jour (status, the new_slope, the new_intercept).
+        
+    Raises:
+        HTTPException: En cas de problème d'accès aux tables de la base de données.
+    """
     # Fetch user ID
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])

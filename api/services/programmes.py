@@ -6,6 +6,16 @@ from api.services import query, users
 # --- Programmes ---
 
 async def create_programme(payload: schemas.ProgrammeCreate, db: Session, user_email: str):
+    """
+    Crée un programme d'entraînement vide pour un utilisateur.
+    
+    Args:
+        payload (schemas.ProgrammeCreate): Les informations de base du programme (nom, description).
+        db (Session): Session de base de données.
+        user_email (str): L'email de l'utilisateur concerné.
+    Returns:
+        dict: Le programme nouvellement créé avec son identifiant.
+    """
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])
     
@@ -17,6 +27,15 @@ async def create_programme(payload: schemas.ProgrammeCreate, db: Session, user_e
     return result[0]
 
 async def get_my_programmes(db: Session, user_email: str):
+    """
+    Récupère la liste de tous les programmes d'entraînement de l'utilisateur actif.
+    
+    Args:
+        db (Session): Session de la base de données.
+        user_email (str): L'email de l'utilisateur.
+    Returns:
+        List[dict]: La liste des programmes.
+    """
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])
     
@@ -27,6 +46,18 @@ async def get_my_programmes(db: Session, user_email: str):
     return await query.execute_generic_query(req, db)
 
 async def get_programme(programme_id: int, db: Session, user_email: str):
+    """
+    Récupère les informations d'un programme d'entraînement par son identifiant.
+    
+    Vérifie qu'il appartient bien à l'utilisateur demandeur.
+    
+    Args:
+        programme_id (int): L'identifiant du programme.
+        db (Session): Session de la base de données.
+        user_email (str): L'email de l'utilisateur.
+    Returns:
+        dict: Le programme.
+    """
     user = await users.get_user_by_email(user_email, db)
     user_id = int(user["id_utilisateur"])
     
@@ -40,6 +71,17 @@ async def get_programme(programme_id: int, db: Session, user_email: str):
     return data[0]
 
 async def update_programme(programme_id: int, payload: schemas.ProgrammeUpdate, db: Session, user_email: str):
+    """
+    Met à jour les informations d'un programme (ex: nom, description).
+    
+    Args:
+        programme_id (int): L'identifiant du programme.
+        payload (schemas.ProgrammeUpdate): Nouvelles informations.
+        db (Session): Session db.
+        user_email (str): L'email de l'utilisateur owner.
+    Returns:
+        dict: Le message de succès d'update.
+    """
     # Verify ownership
     await get_programme(programme_id, db, user_email)
     
@@ -54,6 +96,16 @@ async def update_programme(programme_id: int, payload: schemas.ProgrammeUpdate, 
     return await query.execute_generic_update(req, db)
 
 async def delete_programme(programme_id: int, db: Session, user_email: str):
+    """
+    Supprime un programme d'entraînement et virtuellement ses dépendances s'il y a CASCADE.
+    
+    Args:
+        programme_id (int): L'identifiant du programme à supprimer.
+        db (Session): Session de base de données.
+        user_email (str): L'email de l'utilisateur.
+    Returns:
+        dict: Le statut ou result.rowcount de la suppression.
+    """
     # Verify ownership
     await get_programme(programme_id, db, user_email)
     
