@@ -61,7 +61,7 @@ async def create_seance(seance: schemas.SeanceCreate, db: Session, user_email: s
     )
     result = await query.execute_generic_create(create_req, db)
     if result:
-        return {"message": "Séance créée avec succès", "date_seance": seance.date_seance}
+        return {"message": "Séance créée avec succès", "date_seance": seance.date_seance, "id_seance": result[0]["id_seance"]}
     raise HTTPException(status_code=500, detail="Failed to create seance")
 
 async def update_seance(seance_id: int, seance_update: schemas.SeanceUpdate, db: Session, user_email: str):
