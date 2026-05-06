@@ -8,15 +8,11 @@ hide:
   <img src="bartrack.png" alt="Bartrack Logo" width="260" class="hero-logo"/>
 </p>
 
-<div align="center">
-
 # Bienvenue sur Bartrack
 
 **Bartrack** est une application pensée pour les athlètes de force qui veulent aller au-delà du simple carnet d'entraînement. En s'appuyant sur le **VBT** (*Velocity Based Training*), elle transforme les données de vitesse barre en temps réel en recommandations concrètes, charge optimale, RPE réel, évolution du 1RM.
 
 Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée exploitable, séance après séance.
-
-</div>
 
 ---
 
@@ -44,11 +40,7 @@ Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée ex
 
 ---
 
-<div align="center">
-
 ## Ce que Bartrack fait pour toi
-
-</div>
 
 | Fonctionnalité | Description |
 |---|---|
