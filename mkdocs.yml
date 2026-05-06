@@ -1,7 +1,9 @@
-site_name: "Bartrack - Documentation"
-site_url: https://github.com/Giovanni-Gozzo/Bartrack
+site_name: "Bartrack — Documentation"
+site_description: "Documentation officielle de Bartrack, l'application de suivi de force athlétique basée sur la vélocité (VBT)."
+site_url: https://giovanni-gozzo.github.io/Bartrack
 repo_url: https://github.com/Giovanni-Gozzo/Bartrack
 repo_name: Giovanni-Gozzo/Bartrack
+copyright: Copyright &copy; 2025 Giovanni Gozzo
 
 extra:
   announcement: >
@@ -12,29 +14,44 @@ extra:
 
 theme:
   name: material
+  font:
+    text: Inter
+    code: JetBrains Mono
   palette:
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Passer en mode clair
     - scheme: default
       primary: indigo
       accent: indigo
       toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+        icon: material/weather-night
+        name: Passer en mode sombre
+  logo: bartrack.png
+  favicon: bartrack.png
   features:
     - navigation.sections
     - navigation.expand
     - content.code.copy
     - navigation.instant
+    - navigation.instant.progress
     - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.top
+    - navigation.footer
     - content.code.annotate
     - content.tooltips
+    - toc.follow
+    - search.highlight
+    - search.suggest
+    - search.share
+
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - attr_list

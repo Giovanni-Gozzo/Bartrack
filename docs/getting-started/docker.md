@@ -1,51 +1,61 @@
-# Lancer le Projet (Docker)
+# Lancer le projet avec Docker
 
-Bartrack est conçu pour être facilement lancable dans un environnement isolé (conteneurs) à l'aide de Docker. C'est la méthode recommandée pour le développement local et la mise en production.
+Bartrack est packagé pour tourner dans des conteneurs isolés dès le départ. Pas besoin d'installer Python, de gérer des environnements virtuels ou de configurer PostgreSQL à la main sur ta machine — Docker s'occupe de tout.
+
+---
 
 ## Prérequis
 
-- [Docker](https://docs.docker.com/get-docker/) installé sur votre machine.
+- [Docker Desktop](https://docs.docker.com/get-docker/) installé et en cours d'exécution.
 
-## 1. Fichier d'environnement (`.env`)
+---
 
-Avant de lancer les conteneurs, assurez-vous de posséder un fichier `.env` à la racine de l'application contenant toutes les variables critiques.
+## Étape 1 — Créer le fichier d'environnement
+
+Avant de lancer quoi que ce soit, crée un fichier `.env` à la racine du projet. C'est lui qui contient toutes les variables sensibles que Bartrack utilise pour se connecter à la base de données et signer les tokens JWT.
 
 ```bash title=".env"
 postgres_user=bartrack_user
-postgres_password=your_secure_password
+postgres_password=ton_mot_de_passe_securise
 postgres_host=db
 postgres_port=5432
 postgres_db=bartrack_db
-SECRET_KEY=your_secret_key
+SECRET_KEY=une_cle_secrete_longue_et_aleatoire
 ```
 
-!!! info "Remarque"
-    Le champ `postgres_host` doit pointer sur l'adresse de votre base de données PostgreSQL (votre container dédié ou un service distant externe).
+!!! info "À propos de `postgres_host`"
+    En développement local avec Docker, `postgres_host` doit correspondre au nom du conteneur de ta base de données (ici `db` si tu utilises Docker Compose, ou le nom que tu lui donnes manuellement). En production sur un VPS, c'est l'IP ou le domaine de ton serveur PostgreSQL.
 
-## 2. Base de Données (PostgreSQL)
+---
 
-Comme nous n'utilisons pas de système unifié Docker Compose, vous devez faire tourner une instance de base de données PostgreSQL séparément. Si vous souhaitez en instancier une localement avec Docker :
+## Étape 2 — Lancer PostgreSQL
+
+Bartrack utilise **PostgreSQL 15** comme base de données. Si tu n'en as pas déjà une qui tourne, lance un conteneur dédié en une commande :
 
 ```bash
 docker run -d \
   --name bartrack-db \
   -e POSTGRES_USER=bartrack_user \
-  -e POSTGRES_PASSWORD=your_secure_password \
+  -e POSTGRES_PASSWORD=ton_mot_de_passe_securise \
   -e POSTGRES_DB=bartrack_db \
   -p 5432:5432 \
   postgres:15-alpine
 ```
 
-## 3. Lancement de l'API Bartrack
+Le conteneur démarre en arrière-plan (`-d`) et expose PostgreSQL sur le port standard `5432`.
 
-Ensuite, vous pouvez construire et lancer l'image Docker contenant uniquement l'API FastAPI. 
+---
 
-À la racine du projet, compilez l'image :
+## Étape 3 — Construire et lancer l'API
+
+À la racine du projet, compile l'image Docker de l'API :
+
 ```bash
 docker build -t bartrack-api .
 ```
 
-Puis démarrez le conteneur en pointant vers votre fichier `.env` :
+Puis démarre le conteneur en lui passant ton fichier `.env` :
+
 ```bash
 docker run -d \
   --name bartrack-api \
@@ -54,14 +64,37 @@ docker run -d \
   bartrack-api
 ```
 
-## 4. Accès à l'application
+Attends quelques secondes le temps que FastAPI démarre, puis vérifie les logs :
 
-Une fois les logs stabilisés, vous pouvez interagir avec l'application web auto-hébergée côté utilisateur :
-
-- **Swagger UI (Tests interactifs)** : `http://localhost:8000/docs`
-- **ReDoc** : `http://localhost:8000/redoc`
-
-Pour éteindre l'API :
 ```bash
-docker stop bartrack-api
+docker logs bartrack-api
 ```
+
+---
+
+## Étape 4 — Accéder à l'application
+
+Une fois l'API démarrée, deux interfaces sont disponibles directement dans ton navigateur :
+
+| Interface | URL | Description |
+|---|---|---|
+| **Swagger UI** | `http://localhost:8000/docs` | Tests interactifs de toutes les routes |
+| **ReDoc** | `http://localhost:8000/redoc` | Documentation lisible et structurée |
+
+---
+
+## Commandes utiles
+
+```bash
+# Arrêter l'API
+docker stop bartrack-api
+
+# Redémarrer après une modification de code
+docker build -t bartrack-api . && docker restart bartrack-api
+
+# Voir les logs en temps réel
+docker logs -f bartrack-api
+```
+
+!!! tip "Astuce de dev"
+    Pour itérer rapidement sans reconstruire l'image à chaque changement, tu peux monter le code source en volume : `-v $(pwd)/api:/app/api`. FastAPI rechargera automatiquement si tu utilises `--reload` dans la commande de démarrage Uvicorn.

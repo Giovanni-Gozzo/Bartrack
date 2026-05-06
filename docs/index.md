@@ -3,34 +3,54 @@ hide:
   - navigation
   - toc
 ---
+
 <p align="center">
-  <img src="bartrack.png" alt="Bartrack Logo" width="300" style="border-radius: 10px; margin-bottom: 2rem;"/>
+  <img src="bartrack.png" alt="Bartrack Logo" width="260" class="hero-logo"/>
 </p>
 
-# Bienvenue sur la Documentation de Bartrack
+# Bienvenue sur Bartrack
 
-**Bartrack** est une application pour le suivi des séances de force athlétique et de musculation. Optimisée autour du calcul de vitesse en temps réel (**VBT** - *Velocity Based Training*), elle fournit des analyses telles que la régression linéaire du `slope/intercept` ou l'estimation du `RPE` et du `1RM`.
+**Bartrack** est une application pensée pour les athlètes de force qui veulent aller au-delà du simple carnet d'entraînement. En s'appuyant sur le **VBT** (*Velocity Based Training*), elle transforme les données de vitesse barre en temps réel en recommandations concrètes — charge optimale, RPE réel, évolution du 1RM.
+
+Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée exploitable, séance après séance.
 
 ---
 
 <div class="grid cards" markdown>
 
--   :material-rocket-launch: **Mise en Route**
+-   :material-rocket-launch: **Démarrer en 5 minutes**
 
-    Instructions pour lancer l'application localement via Docker et comprendre l'infrastructure CI/CD sur le VPS.
+    Tout ce qu'il faut pour faire tourner Bartrack localement via Docker — environnement, base de données, API.
 
-    [Guide de Démarrage](getting-started/docker.md){ .md-button .md-button--primary }
+    [Lancer le projet](getting-started/docker.md){ .md-button .md-button--primary }
 
--   :material-book-open-page-variant: **Découvrir le Fonctionnement**
+-   :material-map-marker-path: **Comment ça fonctionne ?**
 
-    Comprendre comment s'articulent toutes les requêtes de bout en bout durant une séance d'entraînement.
+    Du premier squat au profil VBT affiné : découvrez le parcours complet d'un athlète dans Bartrack.
 
-    [Parcours Utilisateur](workflow.md){ .md-button }
+    [Voir le workflow](workflow.md){ .md-button }
 
--   :material-api: **Référence Technique (API)**
+-   :material-api: **Référence API complète**
 
-    Plongez au coeur du code source via l'exploration autogénérée de l'ensemble des services internes et algorithmes scientifiques.
+    Chaque service, chaque algorithme, chaque route — documentés directement depuis le code source.
 
     [Explorer l'API](api/main.md){ .md-button }
 
 </div>
+
+---
+
+## Ce que Bartrack fait pour toi
+
+| Fonctionnalité | Description |
+|---|---|
+| 🏋️ **Suivi VBT** | Calcul du RPE et du 1RM à partir de la vitesse finale de chaque série |
+| 📈 **Régression linéaire** | Profil *slope/intercept* mis à jour au fil des séances via rolling VBT |
+| 📋 **Programmes** | Création de blocs d'entraînement complets avec charge cible et RPE prévu |
+| ⚡ **Temps réel** | Feedback instantané après chaque série via les endpoints `/compute_rpe` et `/compute_weight` |
+| 🔐 **Auth JWT** | Chaque athlète dispose de son profil isolé et sécurisé |
+
+---
+
+!!! tip "Par où commencer ?"
+    Si tu découvres Bartrack pour la première fois, commence par le [Guide Docker](getting-started/docker.md) pour avoir l'API en route en quelques minutes. Ensuite, consulte le [Parcours Utilisateur](workflow.md) pour comprendre la logique de bout en bout.
