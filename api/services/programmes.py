@@ -132,18 +132,31 @@ async def create_programme_exercice(payload: schemas.ProgrammeExerciceCreate, db
     return result[0]
 
 async def get_programme_exercices(programme_id: int, db: Session, user_email: str):
+    """
+    Récupère les exercices d'un programme, triés par ordre de passage.
+
+    Les colonnes sont spécifiées explicitement pour éviter tout conflit de cache
+    de métadonnées SQLAlchemy avec d'autres tables (ex: 'echauffement'
+    appartient à 'serie', pas à 'programme_exercice').
+
+    Args:
+        programme_id (int): L'identifiant du programme.
+        db (Session): Session de base de données.
+        user_email (str): L'email de l'utilisateur.
+    Returns:
+        List[dict]: Les exercices triés par ordre_passage.
+    """
     # Verify programme ownership
     await get_programme(programme_id, db, user_email)
-    
-    # Use explicit columns or generic query
+
     req = schemas.GenericQueryRequest(
         table_name="programme_exercice",
+        columns=["id", "id_programme", "id_exercice", "ordre_passage",
+                 "nombre_series", "nombre_reps", "charge_prevue", "rpe_cible"],
         conditions={"id_programme": programme_id}
     )
-    # Order by ordre_passage can be handled in logic or if we extend generic query
     data = await query.execute_generic_query(req, db)
-    # Manual sort if generic query doesn't support ORDER BY
-    return sorted(data, key=lambda x: x['ordre_passage'])
+    return sorted(data, key=lambda x: x["ordre_passage"])
 
 async def update_programme_exercice(pe_id: int, payload: schemas.ProgrammeExerciceUpdate, db: Session, user_email: str):
     # Retrieve current to verify ownership of parent programme

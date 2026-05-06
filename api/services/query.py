@@ -12,7 +12,7 @@ async def execute_generic_create(request: schemas.GenericCreateRequest, db: Sess
         table = database.metadata.tables[request.table_name]
     else:
         try:
-            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind())
+            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind(), extend_existing=True)
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Table '{request.table_name}' not found or error loading it: {str(e)}")
 
@@ -48,7 +48,7 @@ async def execute_generic_update(request: schemas.GenericUpdateRequest, db: Sess
         table = database.metadata.tables[request.table_name]
     else:
         try:
-            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind())
+            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind(), extend_existing=True)
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Table '{request.table_name}' not found or error loading it: {str(e)}")
 
@@ -82,7 +82,7 @@ async def execute_generic_query(request: schemas.GenericQueryRequest, db: Sessio
         table = database.metadata.tables[request.table_name]
     else:
         try:
-            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind())
+            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind(), extend_existing=True)
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Table '{request.table_name}' not found or error loading it: {str(e)}")
 
@@ -119,7 +119,7 @@ async def execute_generic_delete(request: schemas.GenericDeleteRequest, db: Sess
         table = database.metadata.tables[request.table_name]
     else:
         try:
-            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind())
+            table = Table(request.table_name, database.metadata, autoload_with=db.get_bind(), extend_existing=True)
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Table '{request.table_name}' not found or error loading it: {str(e)}")
 
