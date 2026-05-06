@@ -8,11 +8,15 @@ hide:
   <img src="bartrack.png" alt="Bartrack Logo" width="260" class="hero-logo"/>
 </p>
 
+<div align="center">
+
 # Bienvenue sur Bartrack
 
-**Bartrack** est une application pensée pour les athlètes de force qui veulent aller au-delà du simple carnet d'entraînement. En s'appuyant sur le **VBT** (*Velocity Based Training*), elle transforme les données de vitesse barre en temps réel en recommandations concrètes — charge optimale, RPE réel, évolution du 1RM.
+**Bartrack** est une application pensée pour les athlètes de force qui veulent aller au-delà du simple carnet d'entraînement. En s'appuyant sur le **VBT** (*Velocity Based Training*), elle transforme les données de vitesse barre en temps réel en recommandations concrètes, charge optimale, RPE réel, évolution du 1RM.
 
 Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée exploitable, séance après séance.
+
+</div>
 
 ---
 
@@ -20,7 +24,7 @@ Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée ex
 
 -   :material-rocket-launch: **Démarrer en 5 minutes**
 
-    Tout ce qu'il faut pour faire tourner Bartrack localement via Docker — environnement, base de données, API.
+    Tout ce qu'il faut pour faire tourner Bartrack localement via environnement Docker, base de données, API.
 
     [Lancer le projet](getting-started/docker.md){ .md-button .md-button--primary }
 
@@ -32,7 +36,7 @@ Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée ex
 
 -   :material-api: **Référence API complète**
 
-    Chaque service, chaque algorithme, chaque route — documentés directement depuis le code source.
+    Chaque service, chaque algorithme, chaque route documentée directement depuis le code source.
 
     [Explorer l'API](api/main.md){ .md-button }
 
@@ -40,17 +44,16 @@ Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée ex
 
 ---
 
+<div align="center">
+
 ## Ce que Bartrack fait pour toi
+
+</div>
 
 | Fonctionnalité | Description |
 |---|---|
-| 🏋️ **Suivi VBT** | Calcul du RPE et du 1RM à partir de la vitesse finale de chaque série |
-| 📈 **Régression linéaire** | Profil *slope/intercept* mis à jour au fil des séances via rolling VBT |
-| 📋 **Programmes** | Création de blocs d'entraînement complets avec charge cible et RPE prévu |
-| ⚡ **Temps réel** | Feedback instantané après chaque série via les endpoints `/compute_rpe` et `/compute_weight` |
-| 🔐 **Auth JWT** | Chaque athlète dispose de son profil isolé et sécurisé |
-
----
-
-!!! tip "Par où commencer ?"
-    Si tu découvres Bartrack pour la première fois, commence par le [Guide Docker](getting-started/docker.md) pour avoir l'API en route en quelques minutes. Ensuite, consulte le [Parcours Utilisateur](workflow.md) pour comprendre la logique de bout en bout.
+| **Suivi VBT** | Calcul du RPE et du 1RM à partir de la vitesse finale de chaque série |
+| **Régression linéaire** | Profil *slope/intercept* mis à jour au fil des séances via rolling VBT |
+| **Programmes** | Création de blocs d'entraînement complets avec charge cible et RPE prévu |
+| **Temps réel** | Feedback instantané après chaque série via les endpoints `/compute_rpe` et `/compute_weight` |
+| **Auth JWT** | Chaque athlète dispose de son profil isolé et sécurisé |

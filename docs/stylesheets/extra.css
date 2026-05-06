@@ -243,7 +243,9 @@ code, kbd, pre {
   letter-spacing: 0.02em !important;
   padding: 0.55rem 1.2rem !important;
   transition: all var(--bar-transition) !important;
-  border: 1px solid var(--bar-border) !important;
+  border: 1px solid var(--bar-brand) !important;
+  color: var(--bar-brand) !important;
+  background: transparent !important;
 }
 
 .md-typeset .md-button--primary {
@@ -389,6 +391,23 @@ code, kbd, pre {
   background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(8,145,178,0.2)) !important;
   border-color: rgba(8,145,178,0.3) !important;
   color: #67e8f9 !important;
+}
+
+/* ── Homepage centering ───────────────────────────────── */
+.md-content article > h1:first-of-type,
+.md-content article > p:first-of-type,
+.md-content article > .grid.cards {
+  text-align: center;
+}
+
+.md-content article > h1:first-of-type {
+  margin-top: 1rem;
+}
+
+.md-content article > .grid.cards {
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ── Horizontal rule ───────────────────────────────── */

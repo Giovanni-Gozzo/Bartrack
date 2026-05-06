@@ -97,6 +97,3 @@ docker build -t bartrack-api . && docker restart bartrack-api
 # Consulter les logs en temps réel
 docker logs -f bartrack-api
 ```
-
-!!! tip "Mode développement"
-    En environnement de développement, il est possible de monter le code source en volume (`-v $(pwd)/api:/app/api`) pour éviter de reconstruire l'image à chaque modification. Associé au flag `--reload` d'Uvicorn, cela permet à FastAPI de recharger automatiquement les changements.
