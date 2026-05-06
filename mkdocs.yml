@@ -18,18 +18,9 @@ theme:
     text: Inter
     code: JetBrains Mono
   palette:
-    - scheme: slate
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-sunny
-        name: Passer en mode clair
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-night
-        name: Passer en mode sombre
+    scheme: slate
+    primary: custom
+    accent: custom
   logo: bartrack.png
   favicon: bartrack.png
   features:

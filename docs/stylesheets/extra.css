@@ -7,10 +7,10 @@
 
 /* ── Root tokens ──────────────────────────────────── */
 :root {
-  --bar-brand:      #6366f1;
-  --bar-brand-alt:  #8b5cf6;
+  --bar-brand:      #06b6d4;
+  --bar-brand-alt:  #0891b2;
   --bar-accent:     #06b6d4;
-  --bar-glow:       rgba(99, 102, 241, 0.25);
+  --bar-glow:       rgba(6, 182, 212, 0.25);
   --bar-surface:    rgba(255, 255, 255, 0.04);
   --bar-border:     rgba(255, 255, 255, 0.08);
   --bar-text-muted: rgba(255, 255, 255, 0.55);
@@ -96,7 +96,7 @@ code, kbd, pre {
 }
 
 .md-nav__link--active {
-  background: linear-gradient(90deg, rgba(99, 102, 241, 0.15), transparent) !important;
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), transparent) !important;
   border-left: 2px solid var(--bar-brand) !important;
   color: var(--bar-brand) !important;
   font-weight: 600 !important;
@@ -157,11 +157,11 @@ code, kbd, pre {
 }
 
 .md-typeset code {
-  background: rgba(99, 102, 241, 0.12) !important;
-  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  background: rgba(6, 182, 212, 0.12) !important;
+  border: 1px solid rgba(6, 182, 212, 0.2) !important;
   border-radius: 5px !important;
   padding: 0.12em 0.4em !important;
-  color: #a5b4fc !important;
+  color: #67e8f9 !important;
   font-size: 0.875em !important;
 }
 
@@ -175,7 +175,7 @@ code, kbd, pre {
 
 /* Code block title bar */
 .md-typeset .highlight .filename {
-  background: rgba(99, 102, 241, 0.1) !important;
+  background: rgba(6, 182, 212, 0.1) !important;
   border-bottom: 1px solid var(--bar-border) !important;
   color: var(--bar-brand) !important;
   font-size: 0.78rem !important;
@@ -211,10 +211,10 @@ code, kbd, pre {
 /* info */
 .md-typeset .admonition.info,
 .md-typeset details.info {
-  border-color: rgba(99, 102, 241, 0.3) !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
 }
 .md-typeset .info > .admonition-title {
-  background: rgba(99, 102, 241, 0.12) !important;
+  background: rgba(6, 182, 212, 0.12) !important;
 }
 
 /* danger */
@@ -293,8 +293,8 @@ code, kbd, pre {
 .md-typeset .grid.cards > :is(ul, ol) > li:hover,
 .md-typeset .grid > .card:hover {
   transform: translateY(-4px) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(99,102,241,0.25) !important;
-  border-color: rgba(99, 102, 241, 0.35) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(6,182,212,0.25) !important;
+  border-color: rgba(6, 182, 212, 0.35) !important;
 }
 
 .md-typeset .grid.cards > :is(ul, ol) > li:hover::before,
@@ -311,17 +311,17 @@ code, kbd, pre {
 }
 
 .md-typeset table:not([class]) th {
-  background: rgba(99, 102, 241, 0.12) !important;
+  background: rgba(6, 182, 212, 0.12) !important;
   font-weight: 600 !important;
   font-size: 0.8rem !important;
   letter-spacing: 0.06em !important;
   text-transform: uppercase !important;
-  border-bottom: 1px solid rgba(99,102,241,0.25) !important;
+  border-bottom: 1px solid rgba(6,182,212,0.25) !important;
   color: var(--bar-brand) !important;
 }
 
 .md-typeset table:not([class]) tr:hover td {
-  background: rgba(99, 102, 241, 0.05) !important;
+  background: rgba(6, 182, 212, 0.05) !important;
 }
 
 /* ── Footer ────────────────────────────────────────── */
@@ -334,7 +334,7 @@ code, kbd, pre {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.35);
+  background: rgba(6, 182, 212, 0.35);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--bar-brand); }
@@ -386,9 +386,9 @@ code, kbd, pre {
 
 /* ── Inline API method badges ──────────────────────── */
 .md-typeset strong code {
-  background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2)) !important;
-  border-color: rgba(139,92,246,0.3) !important;
-  color: #c4b5fd !important;
+  background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(8,145,178,0.2)) !important;
+  border-color: rgba(8,145,178,0.3) !important;
+  color: #67e8f9 !important;
 }
 
 /* ── Horizontal rule ───────────────────────────────── */
