@@ -208,8 +208,7 @@ async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Sessio
             nombre_series=exo_data.nombre_series,
             nombre_reps=exo_data.nombre_reps,
             charge_prevue=exo_data.charge_prevue,
-            rpe_cible=exo_data.rpe_cible,
-            echauffement=exo_data.echauffement
+            rpe_cible=exo_data.rpe_cible
         )
         # We call the existing service to reuse logic (ownership check etc.)
         exo = await create_programme_exercice(pe_payload, db, user_email)
@@ -261,8 +260,7 @@ async def update_full_programme(programme_id: int, payload: schemas.ProgrammeFul
                 nombre_series=exo_data.nombre_series,
                 nombre_reps=exo_data.nombre_reps,
                 charge_prevue=exo_data.charge_prevue,
-                rpe_cible=exo_data.rpe_cible,
-                echauffement=exo_data.echauffement
+                rpe_cible=exo_data.rpe_cible
             )
             await create_programme_exercice(pe_payload, db, user_email)
             

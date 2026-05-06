@@ -197,7 +197,6 @@ class ProgrammeExerciceBase(BaseModel):
     nombre_reps: int
     charge_prevue: Optional[float] = None
     rpe_cible: Optional[float] = None
-    echauffement: bool = False
 
 class ProgrammeExerciceCreate(ProgrammeExerciceBase):
     pass
@@ -209,7 +208,6 @@ class ProgrammeExerciceUpdate(BaseModel):
     nombre_reps: Optional[int] = None
     charge_prevue: Optional[float] = None
     rpe_cible: Optional[float] = None
-    echauffement: Optional[bool] = None
 
 class ProgrammeExerciceResponse(ProgrammeExerciceBase):
     id: int
@@ -226,7 +224,6 @@ class ProgrammeExerciceFullCreate(BaseModel):
     nombre_reps: int
     charge_prevue: Optional[float] = None
     rpe_cible: Optional[float] = None
-    echauffement: bool = False
 
 class ProgrammeFullCreate(BaseModel):
     nom_programme: str
