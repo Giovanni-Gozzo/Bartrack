@@ -13,7 +13,7 @@ Ce workflow garantit que le code fusionné est propre, testé et respecte les st
 **Étapes du workflow :**
 
 1. Récupération du code source depuis le dépôt.
-2. Installation des dépendances Python (`requirement.txt`).
+2. Installation des dépendances Python (`requirements.txt`).
 3. **Analyse statique avec Pylint** — le code est inspecté et doit obtenir un score minimum de **7.0 / 10**. Les règles activées couvrent les erreurs logiques, les imports inutilisés, les mauvaises pratiques (`raise` sans `from`, comparaisons incorrectes, etc.).
 4. **Exécution de la suite de tests avec Pytest** — les 28 tests unitaires et d'intégration sont lancés sur une base SQLite en mémoire, sans dépendance à la base de production.
 

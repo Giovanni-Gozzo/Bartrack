@@ -81,7 +81,7 @@ Bartrack/
 ├── .gitignore
 ├── Dockerfile              # Configuration pour la conteneurisation
 ├── README.md               # Documentation du projet
-├── requirement.txt         # Dépendances du projet Python
+├── requirements.txt        # Dépendances du projet Python
 └── api/                    # Code source principal de l'API
     ├── auth.py             # Logique d'authentification (JWT, permissions)
     ├── database.py         # Configuration de la base de données SQLAlchemy
