@@ -19,16 +19,13 @@ Ce workflow garantit que le code fusionné est propre, testé et respecte les st
 
 ```yaml
 - name: Lint with pylint
-  run: pylint api/ --fail-under=7.0 --disable=C0114,C0115,C0116
+  run: pylint api/ --fail-under=7.0
 
 - name: Run tests
   run: pytest tests/ -v
 ```
 
 Le déploiement ne se déclenche **que si cette étape réussit entièrement**.
-
-!!! warning "Secrets requis"
-    Le déploiement utilise `COOLIFY_WEBHOOK_URL` et `COOLIFY_WEBHOOK_SECRET`, à configurer dans `Settings → Secrets and variables → Actions`.
 
 ---
 
@@ -53,33 +50,29 @@ Ce workflow assure la génération et la publication de l'ensemble de la documen
 
 ## Pipeline de déploiement production
 
-**Déclenchement :** automatique à chaque `push` sur `main`.
+**Déclenchement :** automatique à chaque `push` sur `main`, uniquement si le pipeline CI passe entièrement.
 
-Ce workflow orchestre le déploiement automatisé sur le VPS de production via SSH, permettant une mise à jour de l'application sans intervention manuelle.
+Le déploiement est géré par **Coolify**, qui prend en charge la reconstruction de l'image Docker et le redémarrage du conteneur. GitHub Actions se contente de déclencher ce processus via un appel webhook.
 
 **Déroulement du processus :**
 
-1. Authentification SSH sur le VPS via une clé privée stockée de façon sécurisée dans les *Secrets* GitHub.
-2. Récupération de la dernière version du code via `git pull origin main` sur le serveur.
-3. Arrêt et suppression de l'ancien conteneur Docker API.
-4. Compilation d'une nouvelle image Docker depuis le code mis à jour et démarrage immédiat du nouveau conteneur.
+1. Le pipeline CI (lint + tests) s'exécute et doit réussir.
+2. GitHub Actions envoie une requête au webhook Coolify.
+3. Coolify reconstruit l'image Docker depuis le code à jour et redémarre le conteneur automatiquement.
+4. La base de données PostgreSQL reste intacte durant tout le processus.
 
-```bash
-docker build -t bartrack-api .
-docker stop bartrack-api || true
-docker rm bartrack-api || true
-docker run -d --name bartrack-api --env-file .env -p 8000:8000 bartrack-api
+```yaml
+- name: Trigger Coolify deployment
+  if: ${{ secrets.COOLIFY_WEBHOOK_URL != '' }}
+  run: |
+    curl -X GET "${{ secrets.COOLIFY_WEBHOOK_URL }}" \
+      -H "Authorization: Bearer ${{ secrets.COOLIFY_WEBHOOK_SECRET }}"
 ```
 
-5. La base de données PostgreSQL reste intacte durant tout le processus, seul le conteneur API est remplacé.
-
-Le cycle complet, de la validation du code à la mise en production, s'exécute en moins de deux minutes.
-
 !!! danger "Gestion des secrets"
-    Les informations sensibles (IP du serveur, clé SSH, mots de passe) sont stockées exclusivement dans les **GitHub Secrets** (`Settings → Secrets and variables → Actions`) et ne doivent jamais apparaître en clair dans les fichiers de workflow. Les secrets utilisés par le pipeline de déploiement sont :
+    Les secrets suivants doivent être configurés dans `Settings → Secrets and variables → Actions` :
 
-    - `SSH_PRIVATE_KEY` : clé privée SSH pour l'authentification sur le VPS
-    - `HOST_IP` : adresse IP du serveur de production
-    - `VPS_USER` : nom d'utilisateur SSH sur le serveur cible
+    - `COOLIFY_WEBHOOK_URL` : URL du webhook fournie par Coolify
+    - `COOLIFY_WEBHOOK_SECRET` : token d'authentification associé
 
-    Ces valeurs sont injectées à l'exécution et ne sont jamais exposées dans les logs GitHub Actions.
+    Si ces secrets sont absents, l'étape de déploiement est automatiquement ignorée sans faire échouer le pipeline.

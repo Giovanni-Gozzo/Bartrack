@@ -1,18 +1,32 @@
-from sqlalchemy import Table, select, MetaData, update, insert
+from sqlalchemy import Table, select, update, insert
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from api import schemas, database
 
 
 def _load_table(table_name: str, db: Session) -> Table:
+    if table_name not in database.metadata.tables:
+        _refresh_table(table_name, db)
+    return database.metadata.tables[table_name]
+
+
+def _refresh_table(table_name: str, db: Session) -> Table:
     try:
         return Table(table_name, database.metadata, autoload_with=db.get_bind(), extend_existing=True)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Table '{table_name}' not found or error loading it: {str(e)}")
 
 
+def _ensure_columns(table: Table, col_names: list, db: Session) -> Table:
+    """Rafraîchit le cache si une colonne est absente (ex: ALTER TABLE récent)."""
+    if any(c not in table.columns for c in col_names):
+        table = _refresh_table(table.name, db)
+    return table
+
+
 async def execute_generic_create(request: schemas.GenericCreateRequest, db: Session):
     table = _load_table(request.table_name, db)
+    table = _ensure_columns(table, list(request.data.keys()), db)
 
     for col_name in request.data.keys():
         if col_name not in table.columns:
@@ -37,6 +51,8 @@ async def execute_generic_create(request: schemas.GenericCreateRequest, db: Sess
 
 async def execute_generic_update(request: schemas.GenericUpdateRequest, db: Session):
     table = _load_table(request.table_name, db)
+    all_cols = list(request.updates.keys()) + list(request.conditions.keys())
+    table = _ensure_columns(table, all_cols, db)
 
     for col_name in request.updates.keys():
         if col_name not in table.columns:
@@ -60,6 +76,8 @@ async def execute_generic_update(request: schemas.GenericUpdateRequest, db: Sess
 
 async def execute_generic_query(request: schemas.GenericQueryRequest, db: Session):
     table = _load_table(request.table_name, db)
+    checked_cols = [] if "*" in request.columns else request.columns
+    table = _ensure_columns(table, checked_cols + list(request.conditions.keys()), db)
 
     if "*" in request.columns:
         query = select(table)
@@ -88,6 +106,7 @@ async def execute_generic_delete(request: schemas.GenericDeleteRequest, db: Sess
     from sqlalchemy import delete
 
     table = _load_table(request.table_name, db)
+    table = _ensure_columns(table, list(request.conditions.keys()), db)
 
     if not request.conditions:
         raise HTTPException(status_code=400, detail="DELETE operation requires condition(s) to avoid deleting all data")
