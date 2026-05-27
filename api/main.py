@@ -9,7 +9,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 app = FastAPI()
 
-origins = ["*"]
+origins = ["https://bartrack.julien-castellano.fr","http://localhost:3000","http://localhost:5173"
+]
   
 app.add_middleware(
     CORSMiddleware,
