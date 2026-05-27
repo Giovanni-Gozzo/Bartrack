@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
-from sqlalchemy.orm import relationship
 from api.database import Base
 
 class Utilisateur(Base):

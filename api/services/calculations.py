@@ -222,6 +222,14 @@ async def calculate_daily_1rm(payload: schemas.Daily1rmRequest, db: Session, use
     # On calcule l'écart en %
     variation = ((rm_daily - RM1) / RM1) * 100
  
+    # 8. Sauvegarde du daily 1RM dans seance_exo
+    update_req = schemas.GenericUpdateRequest(
+        table_name="seance_exo",
+        updates={"daily_1rm": round(rm_daily, 2)},
+        conditions={"id_seance_exo": payload.id_seance_exo}
+    )
+    await query.execute_generic_update(update_req, db)
+
     return {
         "rmdaily": round(rm_daily, 2),
         "rm_historique": RM1,
@@ -311,7 +319,7 @@ async def compute_rolling_vbt_profile(payload: schemas.RollingCalculationRequest
         seance_exo = Table("seance_exo", metadata, autoload_with=engine)
         serie = Table("serie", metadata, autoload_with=engine)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database metadata error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database metadata error: {str(e)}") from e
     
     # Calculate date 30 days ago
     date_30_days_ago = datetime.now() - timedelta(days=30)
@@ -328,10 +336,10 @@ async def compute_rolling_vbt_profile(payload: schemas.RollingCalculationRequest
                 seance.c.id_utilisateur == user_id,
                 seance_exo.c.id_exercice == payload.id_exercice,
                 seance.c.date_seance >= date_30_days_ago.date(),
-                serie.c.echauffement == False,
-                serie.c.vitesse_fin_serie != None,
+                serie.c.echauffement.is_(False),
+                serie.c.vitesse_fin_serie.isnot(None),
                 serie.c.vitesse_fin_serie > 0,
-                serie.c.rpe_reel != None
+                serie.c.rpe_reel.isnot(None)
             )
         )
     )
@@ -396,7 +404,7 @@ async def compute_rolling_vbt_profile(payload: schemas.RollingCalculationRequest
             await query.execute_generic_create(create_req, db)
             
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur lors de la mise à jour du profil VBT: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la mise à jour du profil VBT: {str(e)}") from e
         
     return {
         "status": "success",

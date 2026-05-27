@@ -94,6 +94,30 @@ def test_initialize_profile_not_found(client, auth_headers):
     )
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
+def test_daily_1rm_saves_to_seance_exo(client, auth_headers, seance_exo_id):
+    # 1. Setup profil VBT
+    client.post("/rm1_users/", json={"id_exercice": "1", "current_1rm": 100.0}, headers=auth_headers)
+    client.post("/initialize", json={"idexercice": "1", "rpe_low": 6.0, "rpe_high": 9.0, "speed_low": 0.7, "speed_high": 0.3}, headers=auth_headers)
+
+    # 2. Compute daily 1RM
+    response = client.post(
+        "/daily_1rm/",
+        json={"idexercice": "1", "id_seance_exo": seance_exo_id, "nbrep": 3, "poidsbarre": 80.0, "vitesse": 0.5},
+        headers=auth_headers
+    )
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "rmdaily" in data
+    assert data["rmdaily"] > 0
+
+    # 3. Verify it was saved in seance_exo
+    seances_resp = client.get("/seances/", headers=auth_headers).json()
+    s_id = seances_resp[0]["id_seance"]
+    exos = client.get(f"/seances/{s_id}/exos", headers=auth_headers).json()
+    saved_daily_1rm = next(e for e in exos if e["id_seance_exo"] == seance_exo_id)["daily_1rm"]
+    assert saved_daily_1rm == data["rmdaily"]
+
+
 def test_compute_rpe(client, auth_headers):
     # 1. Define 1RM
     client.post("/rm1_users/", json={"id_exercice": "1", "current_1rm": 100.0}, headers=auth_headers)

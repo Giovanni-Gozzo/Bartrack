@@ -21,6 +21,7 @@ class PoidsRPE(BaseModel):
 
 class Daily1rmRequest(BaseModel):
     idexercice: str = Field(..., description="Id de l'exercice")
+    id_seance_exo: int = Field(..., description="Id de la liaison séance-exercice")
     nbrep: int = Field(..., description="Nombre de répétitions")
     poidsbarre: float = Field(..., description="Poids de la barre")
     vitesse: float = Field(..., description="Vitesse de la barre")

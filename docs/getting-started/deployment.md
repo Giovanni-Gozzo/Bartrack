@@ -1,6 +1,34 @@
 # Automatisation CI/CD
 
-Bartrack intègre une chaîne d'automatisation complète via **GitHub Actions** qui gère à la fois la génération de documentation et le déploiement en production. Chaque `push` sur la branche `main` déclenche automatiquement ces pipelines.
+Bartrack intègre une chaîne d'automatisation complète via **GitHub Actions** qui gère la qualité du code, les tests, la génération de documentation et le déploiement en production. Chaque `push` sur la branche `main` déclenche automatiquement ces pipelines.
+
+---
+
+## Pipeline de qualité & tests (CI)
+
+**Déclenchement :** à chaque `push` et `pull request` sur `main`.
+
+Ce workflow garantit que le code fusionné est propre, testé et respecte les standards de qualité avant tout déploiement.
+
+**Étapes du workflow :**
+
+1. Récupération du code source depuis le dépôt.
+2. Installation des dépendances Python (`requirement.txt`).
+3. **Analyse statique avec Pylint** — le code est inspecté et doit obtenir un score minimum de **7.0 / 10**. Les règles activées couvrent les erreurs logiques, les imports inutilisés, les mauvaises pratiques (`raise` sans `from`, comparaisons incorrectes, etc.).
+4. **Exécution de la suite de tests avec Pytest** — les 28 tests unitaires et d'intégration sont lancés sur une base SQLite en mémoire, sans dépendance à la base de production.
+
+```yaml
+- name: Lint with pylint
+  run: pylint api/ --fail-under=7.0 --disable=C0114,C0115,C0116
+
+- name: Run tests
+  run: pytest tests/ -v
+```
+
+Le déploiement ne se déclenche **que si cette étape réussit entièrement**.
+
+!!! warning "Secrets requis"
+    Le déploiement utilise `COOLIFY_WEBHOOK_URL` et `COOLIFY_WEBHOOK_SECRET`, à configurer dans `Settings → Secrets and variables → Actions`.
 
 ---
 

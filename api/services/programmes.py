@@ -163,10 +163,10 @@ async def update_programme_exercice(pe_id: int, payload: schemas.ProgrammeExerci
     req_get = schemas.GenericQueryRequest(table_name="programme_exercice", conditions={"id": pe_id})
     current = await query.execute_generic_query(req_get, db)
     if not current:
-         raise HTTPException(status_code=404, detail="Exercice du programme non trouvé")
-    
+        raise HTTPException(status_code=404, detail="Exercice du programme non trouvé")
+
     await get_programme(current[0]["id_programme"], db, user_email)
-    
+
     req = schemas.GenericUpdateRequest(
         table_name="programme_exercice",
         updates=payload.model_dump(exclude_unset=True),
@@ -179,10 +179,10 @@ async def delete_programme_exercice(pe_id: int, db: Session, user_email: str):
     req_get = schemas.GenericQueryRequest(table_name="programme_exercice", conditions={"id": pe_id})
     current = await query.execute_generic_query(req_get, db)
     if not current:
-         raise HTTPException(status_code=404, detail="Exercice du programme non trouvé")
-    
+        raise HTTPException(status_code=404, detail="Exercice du programme non trouvé")
+
     await get_programme(current[0]["id_programme"], db, user_email)
-    
+
     req = schemas.GenericDeleteRequest(
         table_name="programme_exercice",
         conditions={"id": pe_id}

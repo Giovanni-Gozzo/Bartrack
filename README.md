@@ -102,6 +102,20 @@ Bartrack/
 
 ---
 
+## CI/CD
+
+Bartrack dispose d'une chaîne GitHub Actions automatisée sur chaque `push` et `pull request` vers `main`.
+
+| Étape | Outil | Critère |
+|-------|-------|---------|
+| Analyse statique | Pylint | Score ≥ 7.0 / 10 |
+| Tests automatisés | Pytest | 28 tests passants (SQLite, sans dépendance réseau) |
+| Déploiement | Coolify webhook | Déclenché uniquement si lint + tests passent |
+
+Le déploiement en production ne s'exécute jamais si le lint ou les tests échouent.
+
+---
+
 ## Comment lancer l'API
 
 1. **Construire l'image Docker** :

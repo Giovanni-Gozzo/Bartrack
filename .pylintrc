@@ -1,0 +1,24 @@
+[MASTER]
+# Permet à pylint de trouver les modules internes
+init-hook='import sys; sys.path.insert(0, ".")'
+
+[MESSAGES CONTROL]
+disable=
+    C0114,  # missing-module-docstring
+    C0115,  # missing-class-docstring
+    C0116,  # missing-function-docstring
+    C0301,  # line-too-long (géré par le formateur)
+    C0303,  # trailing-whitespace (géré par le formateur)
+    C0304,  # missing-final-newline
+    C0305,  # trailing-newlines
+    C0411,  # wrong-import-order
+    C0413,  # wrong-import-position
+    R0801,  # duplicate-code
+    R0903,  # too-few-public-methods
+    W0511,  # fixme
+
+[FORMAT]
+max-line-length=130
+
+[DESIGN]
+max-args=10

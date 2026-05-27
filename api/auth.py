@@ -1,19 +1,19 @@
+from datetime import datetime, timedelta
+from typing import Optional
+
+from jose import JWTError, jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
-from datetime import datetime, timedelta
-from typing import Optional
-from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-
-# Constants for token generation
-SECRET_KEY = "your_secret_key" # TODO: Change this to environment variable
+SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 1 week
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -22,8 +22,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
@@ -36,15 +36,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-    return email 
+    except JWTError as exc:
+        raise credentials_exception from exc
+    return email
+
 
 def hash_password(password: str):
     return pwd_context.hash(password)
 
+
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
+
 
 async def require_admin(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
@@ -62,8 +65,8 @@ async def require_admin(token: str = Depends(oauth2_scheme)):
         role: str = payload.get("role")
         if email is None or role is None:
             raise credentials_exception
-        if role != "admin": # Assumption based on standard role conventions
+        if role != "admin":
             raise forbidden_exception
-    except JWTError:
-        raise credentials_exception
+    except JWTError as exc:
+        raise credentials_exception from exc
     return email
