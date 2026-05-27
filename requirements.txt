@@ -32,5 +32,5 @@ pytest-asyncio==0.25.3
 pylint==3.3.7
 
 # Docs
-mkdocs-material
+mkdocs-material[imaging]
 mkdocstrings[python]
