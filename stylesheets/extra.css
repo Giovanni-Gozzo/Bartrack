@@ -1,0 +1,452 @@
+/* =====================================================
+   BARTRACK — Custom Documentation Stylesheet
+   Premium dark theme with glassmorphism & animations
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Root tokens ──────────────────────────────────── */
+:root {
+  --bar-brand:      #06b6d4;
+  --bar-brand-alt:  #0891b2;
+  --bar-accent:     #06b6d4;
+  --bar-glow:       rgba(6, 182, 212, 0.25);
+  --bar-surface:    rgba(255, 255, 255, 0.04);
+  --bar-border:     rgba(255, 255, 255, 0.08);
+  --bar-text-muted: rgba(255, 255, 255, 0.55);
+  --bar-radius:     12px;
+  --bar-radius-lg:  20px;
+  --bar-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Base typography ───────────────────────────────── */
+body,
+.md-typeset {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, kbd, pre {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+}
+
+/* ── Header ────────────────────────────────────────── */
+.md-header {
+  background: rgba(15, 15, 23, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid var(--bar-border) !important;
+  box-shadow: 0 1px 0 var(--bar-border), 0 4px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.md-header__title {
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  background: linear-gradient(135deg, var(--bar-brand), var(--bar-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Navigation tabs ───────────────────────────────── */
+.md-tabs {
+  background: rgba(15, 15, 23, 0.7) !important;
+  border-bottom: 1px solid var(--bar-border) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.md-tabs__link {
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  opacity: 0.7;
+  transition: opacity var(--bar-transition), color var(--bar-transition) !important;
+}
+
+.md-tabs__link:hover,
+.md-tabs__link--active {
+  opacity: 1 !important;
+}
+
+.md-tabs__link--active {
+  color: var(--bar-brand) !important;
+}
+
+/* ── Sidebar ───────────────────────────────────────── */
+.md-nav__title {
+  font-weight: 700 !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--bar-text-muted) !important;
+}
+
+.md-nav__link {
+  border-radius: 8px !important;
+  transition: background var(--bar-transition), color var(--bar-transition), padding-left var(--bar-transition) !important;
+  padding: 0.3rem 0.6rem !important;
+  margin: 1px 0 !important;
+}
+
+.md-nav__link:hover {
+  background: var(--bar-surface) !important;
+  padding-left: 0.9rem !important;
+  color: var(--bar-brand) !important;
+}
+
+.md-nav__link--active {
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), transparent) !important;
+  border-left: 2px solid var(--bar-brand) !important;
+  color: var(--bar-brand) !important;
+  font-weight: 600 !important;
+}
+
+/* ── Content area ──────────────────────────────────── */
+.md-content__inner {
+  padding-top: 2.5rem !important;
+  max-width: 860px !important;
+}
+
+/* ── Headings ──────────────────────────────────────── */
+.md-typeset h1 {
+  font-weight: 800 !important;
+  font-size: 2.4rem !important;
+  letter-spacing: -0.04em !important;
+  line-height: 1.2 !important;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem !important;
+}
+
+.md-typeset h2 {
+  font-weight: 700 !important;
+  font-size: 1.45rem !important;
+  letter-spacing: -0.025em !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--bar-border) !important;
+  margin-top: 2.5rem !important;
+}
+
+.md-typeset h3 {
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ── Code blocks ───────────────────────────────────── */
+.md-typeset pre {
+  border-radius: var(--bar-radius) !important;
+  border: 1px solid var(--bar-border) !important;
+  background: #0d0d16 !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.md-typeset pre::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bar-brand), var(--bar-accent), transparent);
+  opacity: 0.6;
+}
+
+.md-typeset code {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border: 1px solid rgba(6, 182, 212, 0.2) !important;
+  border-radius: 5px !important;
+  padding: 0.12em 0.4em !important;
+  color: #67e8f9 !important;
+  font-size: 0.875em !important;
+}
+
+.md-typeset pre > code {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  color: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Code block title bar */
+.md-typeset .highlight .filename {
+  background: rgba(6, 182, 212, 0.1) !important;
+  border-bottom: 1px solid var(--bar-border) !important;
+  color: var(--bar-brand) !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+}
+
+/* ── Admonitions ───────────────────────────────────── */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: var(--bar-radius) !important;
+  border: 1px solid var(--bar-border) !important;
+  background: var(--bar-surface) !important;
+  backdrop-filter: blur(8px) !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3) !important;
+  overflow: hidden !important;
+}
+
+.md-typeset .admonition-title,
+.md-typeset summary {
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* tip */
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+.md-typeset .tip > .admonition-title {
+  background: rgba(6, 182, 212, 0.12) !important;
+}
+
+/* info */
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+.md-typeset .info > .admonition-title {
+  background: rgba(6, 182, 212, 0.12) !important;
+}
+
+/* danger */
+.md-typeset .admonition.danger,
+.md-typeset details.danger {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+.md-typeset .danger > .admonition-title {
+  background: rgba(239, 68, 68, 0.12) !important;
+}
+
+/* warning */
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+.md-typeset .warning > .admonition-title {
+  background: rgba(245, 158, 11, 0.12) !important;
+}
+
+/* ── Buttons ───────────────────────────────────────── */
+.md-typeset .md-button {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.02em !important;
+  padding: 0.55rem 1.2rem !important;
+  transition: all var(--bar-transition) !important;
+  border: 1px solid var(--bar-brand) !important;
+  color: var(--bar-brand) !important;
+  background: transparent !important;
+}
+
+.md-typeset .md-button--primary {
+  background: linear-gradient(135deg, var(--bar-brand), var(--bar-brand-alt)) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 0 20px var(--bar-glow) !important;
+}
+
+.md-typeset .md-button--primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 28px var(--bar-glow) !important;
+}
+
+.md-typeset .md-button:not(.md-button--primary):hover {
+  background: var(--bar-surface) !important;
+  border-color: var(--bar-brand) !important;
+  color: var(--bar-brand) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Grid cards ────────────────────────────────────── */
+.md-typeset .grid.cards > :is(ul, ol) > li,
+.md-typeset .grid > .card {
+  border: 1px solid var(--bar-border) !important;
+  border-radius: var(--bar-radius-lg) !important;
+  background: var(--bar-surface) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3) !important;
+  transition: transform var(--bar-transition), box-shadow var(--bar-transition), border-color var(--bar-transition) !important;
+  padding: 1.4rem 1.6rem !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li::before,
+.md-typeset .grid > .card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bar-brand), transparent);
+  opacity: 0;
+  transition: opacity var(--bar-transition);
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover,
+.md-typeset .grid > .card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(6,182,212,0.25) !important;
+  border-color: rgba(6, 182, 212, 0.35) !important;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover::before,
+.md-typeset .grid > .card:hover::before {
+  opacity: 1;
+}
+
+/* ── Tables ────────────────────────────────────────── */
+.md-typeset table:not([class]) {
+  border-radius: var(--bar-radius) !important;
+  overflow: hidden !important;
+  border: 1px solid var(--bar-border) !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3) !important;
+}
+
+.md-typeset table:not([class]) th {
+  background: rgba(6, 182, 212, 0.12) !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  border-bottom: 1px solid rgba(6,182,212,0.25) !important;
+  color: var(--bar-brand) !important;
+}
+
+.md-typeset table:not([class]) tr:hover td {
+  background: rgba(6, 182, 212, 0.05) !important;
+}
+
+/* ── Footer ────────────────────────────────────────── */
+.md-footer {
+  background: rgba(10, 10, 18, 0.95) !important;
+  border-top: 1px solid var(--bar-border) !important;
+}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.35);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--bar-brand); }
+
+/* ── Homepage hero ─────────────────────────────────── */
+.hero-logo {
+  display: block;
+  margin: 0 auto 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 0 60px var(--bar-glow), 0 20px 60px rgba(0,0,0,0.6);
+  transition: transform var(--bar-transition), box-shadow var(--bar-transition);
+}
+.hero-logo:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 80px var(--bar-glow), 0 24px 72px rgba(0,0,0,0.7);
+}
+
+/* ── Mermaid diagrams ──────────────────────────────── */
+.mermaid {
+  background: rgba(13, 13, 22, 0.8) !important;
+  border: 1px solid var(--bar-border) !important;
+  border-radius: var(--bar-radius) !important;
+  padding: 1.5rem !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* ── Search ────────────────────────────────────────── */
+.md-search__form {
+  border-radius: 10px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid var(--bar-border) !important;
+  transition: all var(--bar-transition) !important;
+}
+.md-search__form:focus-within {
+  background: rgba(255,255,255,0.09) !important;
+  border-color: var(--bar-brand) !important;
+  box-shadow: 0 0 0 3px var(--bar-glow) !important;
+}
+
+/* ── Permalink anchor ──────────────────────────────── */
+.md-typeset .headerlink {
+  color: var(--bar-brand) !important;
+  opacity: 0;
+  transition: opacity var(--bar-transition) !important;
+}
+.md-typeset :hover > .headerlink {
+  opacity: 0.6;
+}
+
+/* ── Inline API method badges ──────────────────────── */
+.md-typeset strong code {
+  background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(8,145,178,0.2)) !important;
+  border-color: rgba(8,145,178,0.3) !important;
+  color: #67e8f9 !important;
+}
+
+/* ── Homepage centering ───────────────────────────────── */
+.home-page {
+  text-align: center;
+}
+
+.home-page .grid.cards {
+  text-align: left;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1200px;
+}
+
+.home-page table {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: left;
+}
+
+/* ── Horizontal rule ───────────────────────────────── */
+.md-typeset hr {
+  border: none !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, var(--bar-border), transparent) !important;
+  margin: 2.5rem 0 !important;
+}
+
+/* ── List items ────────────────────────────────────── */
+.md-typeset ul li::marker {
+  color: var(--bar-brand);
+}
+.md-typeset ol li::marker {
+  color: var(--bar-brand);
+  font-weight: 700;
+}
+
+/* ── Back to top ───────────────────────────────────── */
+.md-top {
+  background: linear-gradient(135deg, var(--bar-brand), var(--bar-brand-alt)) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 16px var(--bar-glow) !important;
+}
+
+/* ── Announcement bar ──────────────────────────────── */
+.md-banner {
+  background: linear-gradient(90deg, var(--bar-brand), var(--bar-brand-alt), var(--bar-accent)) !important;
+  font-weight: 600 !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* ── Responsive tweaks ─────────────────────────────── */
+@media (max-width: 768px) {
+  .md-typeset h1 { font-size: 1.8rem !important; }
+  .md-typeset h2 { font-size: 1.25rem !important; }
+  .md-content__inner { padding-top: 1.5rem !important; }
+}
