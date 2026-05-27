@@ -6,6 +6,8 @@ hide:
 
 <div class="home-page" markdown>
 
+<div style="text-align: center" markdown>
+
 <p align="center">
   <img src="bartrack.png" alt="Bartrack Logo" width="260" class="hero-logo"/>
 </p>
@@ -51,5 +53,7 @@ Plus de devinettes. Plus de sur-entraînement par hasard. Juste de la donnée ex
 | **Programmes** | Création de blocs d'entraînement complets avec charge cible et RPE prévu |
 | **Temps réel** | Feedback instantané après chaque série via les endpoints `/compute_rpe` et `/compute_weight` |
 | **Auth JWT** | Chaque athlète dispose de son profil isolé et sécurisé |
+
+</div>
 
 </div>

@@ -69,9 +69,6 @@ Le déploiement est géré par **Coolify**, qui prend en charge la reconstructio
       -H "Authorization: Bearer ${{ secrets.COOLIFY_WEBHOOK_SECRET }}"
 ```
 
-!!! warning "Secrets requis"
-    Le déploiement utilise `COOLIFY_WEBHOOK_URL` et `COOLIFY_WEBHOOK_SECRET`, à configurer dans `Settings → Secrets and variables → Actions`.
-
 !!! danger "Gestion des secrets"
     Les secrets suivants doivent être configurés dans `Settings → Secrets and variables → Actions` :
 
