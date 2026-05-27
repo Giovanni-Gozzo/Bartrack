@@ -394,16 +394,25 @@ code, kbd, pre {
 }
 
 /* ── Homepage centering ───────────────────────────────── */
+.md-content__inner:has(.home-page) {
+  max-width: none !important;
+  margin: 0 auto !important;
+}
+
 .home-page {
+  max-width: 960px;
+  margin: 0 auto;
   text-align: center;
+}
+
+.home-page h1,
+.home-page h2,
+.home-page p {
+  text-align: center !important;
 }
 
 .home-page .grid.cards {
   text-align: left;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 1200px;
 }
 
 .home-page table {
