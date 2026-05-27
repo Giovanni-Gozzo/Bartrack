@@ -394,24 +394,22 @@ code, kbd, pre {
 }
 
 /* ── Homepage centering ───────────────────────────────── */
-/* Only center content on homepage (page without navigation and toc) */
-.md-content:has(.md-content__inner):not(:has(.md-nav--secondary)) article > h1:first-of-type,
-.md-content:has(.md-content__inner):not(:has(.md-nav--secondary)) article > h1:first-of-type + p,
-.md-content:has(.md-content__inner):not(:has(.md-nav--secondary)) article > h1:first-of-type + p + p,
-.md-content:has(.md-content__inner):not(:has(.md-nav--secondary)) article h2 {
-  text-align: center !important;
+.home-page {
+  text-align: center;
 }
 
-.md-content:has(.md-content__inner):not(:has(.md-nav--secondary)) .grid.cards {
+.home-page .grid.cards {
+  text-align: left;
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
   max-width: 1200px;
 }
 
-.md-content:has(.md-content__inner):not(:has(.md-nav--secondary)) table {
+.home-page table {
   margin-left: auto !important;
   margin-right: auto !important;
+  text-align: left;
 }
 
 /* ── Horizontal rule ───────────────────────────────── */

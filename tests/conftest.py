@@ -114,6 +114,7 @@ programme_exercice = Table(
     extend_existing=True
 )
 
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
     # Create the tables

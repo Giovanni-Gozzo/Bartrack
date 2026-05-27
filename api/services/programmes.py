@@ -152,7 +152,7 @@ async def get_programme_exercices(programme_id: int, db: Session, user_email: st
     req = schemas.GenericQueryRequest(
         table_name="programme_exercice",
         columns=["id", "id_programme", "id_exercice", "ordre_passage",
-                 "nombre_series", "nombre_reps", "charge_prevue", "rpe_cible"],
+                 "nombre_series", "nombre_reps", "charge_prevue", "rpe_cible", "echauffement"],
         conditions={"id_programme": programme_id}
     )
     data = await query.execute_generic_query(req, db)
@@ -208,7 +208,8 @@ async def create_full_programme(payload: schemas.ProgrammeFullCreate, db: Sessio
             nombre_series=exo_data.nombre_series,
             nombre_reps=exo_data.nombre_reps,
             charge_prevue=exo_data.charge_prevue,
-            rpe_cible=exo_data.rpe_cible
+            rpe_cible=exo_data.rpe_cible,
+            echauffement=exo_data.echauffement
         )
         # We call the existing service to reuse logic (ownership check etc.)
         exo = await create_programme_exercice(pe_payload, db, user_email)

@@ -11,9 +11,12 @@ HOST = os.getenv("postgres_host")
 PORT = os.getenv("postgres_port")
 DBNAME = os.getenv("postgres_dbname")
 
-DATABASE_URL = f"postgresql+psycopg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
+if all([USER, PASSWORD, HOST, PORT, DBNAME]):
+    DATABASE_URL = f"postgresql+psycopg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
+else:
+    DATABASE_URL = "sqlite:///./test_bartrack.db"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {})
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

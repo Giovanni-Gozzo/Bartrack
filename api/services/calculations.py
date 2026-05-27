@@ -35,12 +35,17 @@ async def initialize_profile(payload: schemas.InitRequest, db: Session, user_ema
     v_low = payload.speed_low
     v_high = payload.speed_high
 
-    if rpe_high <= rpe_low:
-        raise HTTPException(status_code=400, detail="rpe_high doit être strictement supérieur à rpe_low.")
     if v_low <= 0 or v_high <= 0:
         raise HTTPException(status_code=400, detail="Les vitesses doivent être strictement positives.")
+    if v_low == v_high:
+        raise HTTPException(status_code=400, detail="Les deux vitesses doivent être différentes.")
+    if rpe_low == rpe_high:
+        raise HTTPException(status_code=400, detail="Les deux RPE doivent être différents.")
+
+    # Normalise les paires (RPE, vitesse) : vitesse basse → RPE haut, vitesse haute → RPE bas
     if v_high > v_low:
-        raise HTTPException(status_code=400, detail="v_high doit être strictement inférieur à v_low.")
+        v_high, v_low = v_low, v_high
+        rpe_high, rpe_low = rpe_low, rpe_high
 
     slope = (rpe_high - rpe_low) / (v_high - v_low)
     intercept = rpe_high - slope * v_high
